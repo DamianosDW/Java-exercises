@@ -45,10 +45,10 @@ public class Main
                 System.exit(0);
             }
             // Wygenerowanie e-maila i zapisanie go do pliku
-            saveDataToFile(new Person(name, surname));
+            saveDataToFile(new Employee(name, surname));
         }
     }
-    private static boolean checkIfPersonIsInFile(Person person)
+    private static boolean checkIfPersonIsInFile(Employee employee)
     {
         BufferedReader bufferedReader = null;
         try {
@@ -60,7 +60,7 @@ public class Main
                 // Usuniecie @domena z tekstu
                 textLine = textLine.substring(0, textLine.indexOf("@"));
                 // Sprawdzenie czy podana osoba jest juz w pliku
-                if(textLine.contains(person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase()))
+                if(textLine.contains(employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase()))
                     mailCounter++;
             }
             // Zwrocenie true, gdy osoba zostala znaleziona w pliku
@@ -80,7 +80,7 @@ public class Main
         }
         return false;
     }
-    private static void saveDataToFile(Person person)
+    private static void saveDataToFile(Employee employee)
     {
         // Zapisanie nowego e-maila do pliku
         BufferedWriter bufferedWriter = null;
@@ -88,17 +88,17 @@ public class Main
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(filePath, true));
 
-            if(checkIfPersonIsInFile(person))
+            if(checkIfPersonIsInFile(employee))
             {
                 // Wygenerowanie e-maila z numerem
-                mail = person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase() + mailCounter + "@inferno-ts3.pl";
+                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + mailCounter + "@inferno-ts3.pl";
                 // Wyzerowanie zmiennej pomocniczej
                 mailCounter = 0;
             }
             else
             {
                 // Wygenerowanie e-maila bez numeru
-                mail = person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase() + "@inferno-ts3.pl";
+                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + "@inferno-ts3.pl";
             }
             // Zapisanie e-maila do pliku
             bufferedWriter.write(mail);

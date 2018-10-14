@@ -1,10 +1,10 @@
 package lab2;
 
-public class Person
+public class Employee
 {
     public String name;
     public String surname;
-    public Person(String name, String surname)
+    public Employee(String name, String surname)
     {
         this.name = name;
         this.surname = surname;
