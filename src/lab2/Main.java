@@ -91,14 +91,14 @@ public class Main
             if(checkIfPersonIsInFile(employee))
             {
                 // Wygenerowanie e-maila z numerem
-                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + mailCounter + "@inferno-ts3.pl";
+                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + mailCounter + "@mex.com";
                 // Wyzerowanie zmiennej pomocniczej
                 mailCounter = 0;
             }
             else
             {
                 // Wygenerowanie e-maila bez numeru
-                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + "@inferno-ts3.pl";
+                mail = employee.surname.trim().toLowerCase() + "." + employee.name.trim().toLowerCase() + "@mex.com";
             }
             // Zapisanie e-maila do pliku
             bufferedWriter.write(mail);
