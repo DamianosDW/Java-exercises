@@ -48,7 +48,7 @@ public class Main
             saveDataToFile(new Person(name, surname));
         }
     }
-    private static boolean checkifPersonIsInFile(Person person)
+    private static boolean checkIfPersonIsInFile(Person person)
     {
         BufferedReader bufferedReader = null;
         try {
@@ -60,7 +60,7 @@ public class Main
                 // Usuniecie @domena z tekstu
                 textLine = textLine.substring(0, textLine.indexOf("@"));
                 // Sprawdzenie czy podana osoba jest juz w pliku
-                if(textLine.contains((person.name + person.surname).toLowerCase()))
+                if(textLine.contains(person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase()))
                     mailCounter++;
             }
             // Zwrocenie true, gdy osoba zostala znaleziona w pliku
@@ -88,17 +88,17 @@ public class Main
         try {
             bufferedWriter = new BufferedWriter(new FileWriter(filePath, true));
 
-            if(checkifPersonIsInFile(person))
+            if(checkIfPersonIsInFile(person))
             {
                 // Wygenerowanie e-maila z numerem
-                mail = (person.name.trim() + person.surname.trim()).toLowerCase() + mailCounter + "@inferno-ts3.pl";
+                mail = person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase() + mailCounter + "@inferno-ts3.pl";
                 // Wyzerowanie zmiennej pomocniczej
                 mailCounter = 0;
             }
             else
             {
                 // Wygenerowanie e-maila bez numeru
-                mail = (person.name.trim() + person.surname.trim()).toLowerCase() + "@inferno-ts3.pl";
+                mail = person.surname.trim().toLowerCase() + "." + person.name.trim().toLowerCase() + "@inferno-ts3.pl";
             }
             // Zapisanie e-maila do pliku
             bufferedWriter.write(mail);
