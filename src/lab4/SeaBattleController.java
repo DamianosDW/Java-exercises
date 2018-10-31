@@ -215,266 +215,6 @@ public class SeaBattleController
             }
         }
     }
-    // Prepare game area for computer
-    private void prepareComputerGridPane()
-    {
-        // Add buttons to all gridpane fields
-        for(int row = 0; row < 10; row++)
-        {
-            for(int column = 0; column < 10; column++)
-            {
-                // Create button
-                SeaBattleCell seaBattleCell = new SeaBattleCell(row, column, false);
-                // Add button to array
-                computerSeaBattleCells[row][column] = seaBattleCell;
-                // Add button to GridPane
-                computerGridPane.add(seaBattleCell, column, row);
-            }
-        }
-        // Prepare computer ships
-        prepareComputerShips();
-    }
-
-    // Prepare computer ships
-    private void prepareComputerShips()
-    {
-        // Create 4-fields ship
-        computerShipWithFourFields[0] = createComputerShip(4);
-        System.out.println("Umieszczono statek złożony z 4 pól!");
-        // Create 3-fields ships
-        computerShipsWithThreeFields[0] = createComputerShip(3);
-        System.out.println("Umieszczono statek złożony z 3 pól!");
-        computerShipsWithThreeFields[1] = createComputerShip(3);
-        System.out.println("Umieszczono statek złożony z 3 pól!");
-        // Create 2-fields ships
-        computerShipsWithTwoFields[0] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[1] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[2] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
-        // Create 1-field ships
-        computerShipsWithOneField[0] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[1] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[2] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[3] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-
-        placeComputerShips();
-
-    }
-
-    // This method creates ship for computer with defined length
-    private Ship createComputerShip(int length)
-    {
-        String orientation;
-        int columnNumber = 0;
-        int endPosition = 0;
-        int rowNumber = 0;
-        Random random = new Random();
-        // Get random shipOrientation
-        orientation = (random.nextInt(2) == 1) ? "horizontal" : "vertical";
-        // Create temp array with ship coordinates
-        ShipCoordinates[] shipCoordinates = new ShipCoordinates[length];
-
-        // Put ship into free fields
-        do
-        {
-            // Set proper ship end position
-            switch(orientation)
-            {
-                case "horizontal":
-                    // Get random row number
-                    rowNumber = random.nextInt(9) + 1;
-                    // Set proper start ship position (prevent from getting position > 10)
-                    switch(length)
-                    {
-                        case 1:
-                            // Set ship start position
-                            columnNumber = random.nextInt(9) + 1;
-                            break;
-                        case 2:
-                            // Set ship start position
-                            columnNumber = random.nextInt(7) + 1;
-                            break;
-                        case 3:
-                            // Set ship start position
-                            columnNumber = random.nextInt(6) + 1;
-                            break;
-                        case 4:
-                            // Set ship start position
-                            columnNumber = random.nextInt(5) + 1;
-                            break;
-                    }
-                    // Add first field to array
-                    shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
-                    // Add another fields to array
-                    for(int i = 1; i < length; i++)
-                    {
-                        shipCoordinates[i] = new ShipCoordinates(rowNumber, ++columnNumber);
-                    }
-                    break;
-                case "vertical":
-                    // Get random row number
-                    do {
-                        rowNumber = random.nextInt(9);
-                    } while(rowNumber < length);
-                    // Set proper start ship position (prevent from getting position > 10)
-                    switch(length)
-                    {
-                        case 1:
-                            // Set ship start position
-                            columnNumber = random.nextInt(9) + 1;
-                            break;
-                        case 2:
-                            // Set ship start position
-                            columnNumber = random.nextInt(7) + 1;
-                            break;
-                        case 3:
-                            // Set ship start position
-                            columnNumber = random.nextInt(6) + 1;
-                            break;
-                        case 4:
-                            // Set ship start position
-                            columnNumber = random.nextInt(5) + 1;
-                            break;
-                    }
-                    // Add first field to array
-                    shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
-                    // Add another fields to array
-                    for(int i = 1; i < length; i++)
-                    {
-                        shipCoordinates[i] = new ShipCoordinates(++rowNumber, columnNumber);
-                    }
-                    break;
-            }
-            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ", endPosition = " + endPosition + ". Orientation: " + orientation);
-        } while(!checkIfShipPositionIsCorrect(shipCoordinates, true));
-
-        // Insert information about occupied fields to list
-        if(orientation.equals("vertical"))
-        {
-            for(ShipCoordinates ship : shipCoordinates)
-            {
-                // Add fields occupied by ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
-                // Add fields next to the ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
-
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
-            }
-        }
-        else
-        {
-            for(ShipCoordinates ship : shipCoordinates)
-            {
-                // Add fields occupied by ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
-                // Add fields next to the ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
-
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
-            }
-        }
-        // Create ship object
-        return new Ship(length, orientation, shipCoordinates, true);
-    }
-    // This method places computer ships into GridPane container fields
-    private void placeComputerShips()
-    {
-
-        System.out.println("-------------------------------------------------------------");
-        // Set proper number of ships
-        int numberOfShips = 1;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        changeSeaBattleCellBackgroundColor(4, numberOfShips - 1, true);
-
-        for(Ship ship : computerShipWithFourFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(3, shipNumber, true);
-
-        for(Ship ship : computerShipsWithThreeFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(2, shipNumber, true);
-
-        for(Ship ship : computerShipsWithTwoFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(1, shipNumber, true);
-
-        for(Ship ship : computerShipsWithOneField)
-        {
-            System.out.println(ship);
-        }
-    }
-    // This method checks if ship position is correct
-    private boolean checkIfShipPositionIsCorrect(ShipCoordinates[] shipCoordinates, boolean checkComputerShips)
-    {
-        if(checkComputerShips)
-        {
-            // Check if fields are free
-            if(!computerFieldsOccupied.isEmpty())
-            {
-                for(FieldsOccupied field : computerFieldsOccupied)
-                {
-                    for(int i = 0; i < shipCoordinates.length; i++)
-                    {
-                        if(field.getRowNumber() == shipCoordinates[i].getRow() && field.getColumnNumber() == shipCoordinates[i].getColumn())
-                            return false;
-                    }
-                }
-            }
-            return true;
-        }
-        else
-        {
-            // Check if fields are free
-            if(!playerFieldsOccupied.isEmpty())
-            {
-                for(FieldsOccupied field : playerFieldsOccupied)
-                {
-                    for(int i = 0; i < shipCoordinates.length; i++)
-                    {
-                        if(field.getRowNumber() == shipCoordinates[i].getRow() && field.getColumnNumber() == shipCoordinates[i].getColumn())
-                            return false;
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
     // This method creates ship for player with defined length
     private Ship createPlayerShip(int rowNumber, int columnNumber)
     {
@@ -525,10 +265,13 @@ public class SeaBattleController
                     // Add fields next to the ship to list
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
 
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() + 1));
+
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() - 1));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
                 }
             }
@@ -541,10 +284,13 @@ public class SeaBattleController
                     // Add fields next to the ship to list
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
 
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() - 1));
+
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() + 1));
                     playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
                 }
             }
@@ -672,6 +418,270 @@ public class SeaBattleController
         setShipPreviewWorkingArea(shipOrientation);
     }
 
+    // Prepare game area for computer
+    private void prepareComputerGridPane()
+    {
+        // Add buttons to all gridpane fields
+        for(int row = 0; row < 10; row++)
+        {
+            for(int column = 0; column < 10; column++)
+            {
+                // Create button
+                SeaBattleCell seaBattleCell = new SeaBattleCell(row, column, false);
+                // Add button to array
+                computerSeaBattleCells[row][column] = seaBattleCell;
+                // Add button to GridPane
+                computerGridPane.add(seaBattleCell, column, row);
+            }
+        }
+        // Prepare computer ships
+        prepareComputerShips();
+    }
+    // Prepare computer ships
+    private void prepareComputerShips()
+    {
+        // Create 4-fields ship
+        computerShipWithFourFields[0] = createComputerShip(4);
+        System.out.println("Umieszczono statek złożony z 4 pól!");
+        // Create 3-fields ships
+        computerShipsWithThreeFields[0] = createComputerShip(3);
+        System.out.println("Umieszczono statek złożony z 3 pól!");
+        computerShipsWithThreeFields[1] = createComputerShip(3);
+        System.out.println("Umieszczono statek złożony z 3 pól!");
+        // Create 2-fields ships
+        computerShipsWithTwoFields[0] = createComputerShip(2);
+        System.out.println("Umieszczono statek złożony z 2 pól!");
+        computerShipsWithTwoFields[1] = createComputerShip(2);
+        System.out.println("Umieszczono statek złożony z 2 pól!");
+        computerShipsWithTwoFields[2] = createComputerShip(2);
+        System.out.println("Umieszczono statek złożony z 2 pól!");
+        // Create 1-field ships
+        computerShipsWithOneField[0] = createComputerShip(1);
+        System.out.println("Umieszczono statek złożony z 1 pola!");
+        computerShipsWithOneField[1] = createComputerShip(1);
+        System.out.println("Umieszczono statek złożony z 1 pola!");
+        computerShipsWithOneField[2] = createComputerShip(1);
+        System.out.println("Umieszczono statek złożony z 1 pola!");
+        computerShipsWithOneField[3] = createComputerShip(1);
+        System.out.println("Umieszczono statek złożony z 1 pola!");
+
+        placeComputerShips();
+
+    }
+    // This method creates ship for computer with defined length
+    private Ship createComputerShip(int length)
+    {
+        String orientation;
+        int columnNumber = 0;
+        int endPosition = 0;
+        int rowNumber = 0;
+        Random random = new Random();
+        // Get random shipOrientation
+        orientation = (random.nextInt(2) == 1) ? "horizontal" : "vertical";
+        // Create temp array with ship coordinates
+        ShipCoordinates[] shipCoordinates = new ShipCoordinates[length];
+
+        // Put ship into free fields
+        do
+        {
+            // Set proper ship end position
+            switch(orientation)
+            {
+                case "horizontal":
+                    // Get random row number
+                    rowNumber = random.nextInt(9) + 1;
+                    // Set proper start ship position (prevent from getting position > 10)
+                    switch(length)
+                    {
+                        case 1:
+                            // Set ship start position
+                            columnNumber = random.nextInt(9) + 1;
+                            break;
+                        case 2:
+                            // Set ship start position
+                            columnNumber = random.nextInt(7) + 1;
+                            break;
+                        case 3:
+                            // Set ship start position
+                            columnNumber = random.nextInt(6) + 1;
+                            break;
+                        case 4:
+                            // Set ship start position
+                            columnNumber = random.nextInt(5) + 1;
+                            break;
+                    }
+                    // Add first field to array
+                    shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
+                    // Add another fields to array
+                    for(int i = 1; i < length; i++)
+                    {
+                        shipCoordinates[i] = new ShipCoordinates(rowNumber, ++columnNumber);
+                    }
+                    break;
+                case "vertical":
+                    // Get random row number
+                    do {
+                        rowNumber = random.nextInt(9);
+                    } while(rowNumber < length);
+                    // Set proper start ship position (prevent from getting position > 10)
+                    switch(length)
+                    {
+                        case 1:
+                            // Set ship start position
+                            columnNumber = random.nextInt(9) + 1;
+                            break;
+                        case 2:
+                            // Set ship start position
+                            columnNumber = random.nextInt(7) + 1;
+                            break;
+                        case 3:
+                            // Set ship start position
+                            columnNumber = random.nextInt(6) + 1;
+                            break;
+                        case 4:
+                            // Set ship start position
+                            columnNumber = random.nextInt(5) + 1;
+                            break;
+                    }
+                    // Add first field to array
+                    shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
+                    // Add another fields to array
+                    for(int i = 1; i < length; i++)
+                    {
+                        shipCoordinates[i] = new ShipCoordinates(++rowNumber, columnNumber);
+                    }
+                    break;
+            }
+            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ", endPosition = " + endPosition + ". Orientation: " + orientation);
+        } while(!checkIfShipPositionIsCorrect(shipCoordinates, true));
+
+        // Insert information about occupied fields to list
+        if(orientation.equals("vertical"))
+        {
+            for(ShipCoordinates ship : shipCoordinates)
+            {
+                // Add fields occupied by ship to list
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
+                // Add fields next to the ship to list
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
+
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() + 1));
+
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
+            }
+        }
+        else
+        {
+            for(ShipCoordinates ship : shipCoordinates)
+            {
+                // Add fields occupied by ship to list
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
+                // Add fields next to the ship to list
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
+
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() - 1));
+
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
+            }
+        }
+        // Create ship object
+        return new Ship(length, orientation, shipCoordinates, true);
+    }
+    // This method places computer ships into GridPane container fields
+    private void placeComputerShips()
+    {
+
+        System.out.println("-------------------------------------------------------------");
+        // Set proper number of ships
+        int numberOfShips = 1;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        changeSeaBattleCellBackgroundColor(4, numberOfShips - 1, true);
+
+        for(Ship ship : computerShipWithFourFields)
+        {
+            System.out.println(ship);
+        }
+        System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(3, shipNumber, true);
+
+        for(Ship ship : computerShipsWithThreeFields)
+        {
+            System.out.println(ship);
+        }
+        System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(2, shipNumber, true);
+
+        for(Ship ship : computerShipsWithTwoFields)
+        {
+            System.out.println(ship);
+        }
+        System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(1, shipNumber, true);
+
+        for(Ship ship : computerShipsWithOneField)
+        {
+            System.out.println(ship);
+        }
+    }
+
+    // This method checks if ship position is correct
+    private boolean checkIfShipPositionIsCorrect(ShipCoordinates[] shipCoordinates, boolean checkComputerShips)
+    {
+        if(checkComputerShips)
+        {
+            // Check if fields are free
+            if(!computerFieldsOccupied.isEmpty())
+            {
+                for(FieldsOccupied field : computerFieldsOccupied)
+                {
+                    for(int i = 0; i < shipCoordinates.length; i++)
+                    {
+                        if(field.getRowNumber() == shipCoordinates[i].getRow() && field.getColumnNumber() == shipCoordinates[i].getColumn())
+                            return false;
+                    }
+                }
+            }
+            return true;
+        }
+        else
+        {
+            // Check if fields are free
+            if(!playerFieldsOccupied.isEmpty())
+            {
+                for(FieldsOccupied field : playerFieldsOccupied)
+                {
+                    for(int i = 0; i < shipCoordinates.length; i++)
+                    {
+                        if(field.getRowNumber() == shipCoordinates[i].getRow() && field.getColumnNumber() == shipCoordinates[i].getColumn())
+                            return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
     // This method changes buttons background color
     private void changeSeaBattleCellBackgroundColor(int shipLength, int shipNumber, boolean changeComputerSeaBattleCells)
     {
@@ -858,6 +868,7 @@ public class SeaBattleController
         }
     }
 
+    // Alerts
     private void showStartGameDialogAndHideShipPreview()
     {
         // Show information about game start
@@ -868,7 +879,6 @@ public class SeaBattleController
         // Hide ship preview container
         shipPreviewMainContainer.setVisible(false);
     }
-
     private void showErrorDialog(String message)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
