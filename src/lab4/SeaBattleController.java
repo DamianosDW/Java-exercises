@@ -5,7 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -59,7 +58,7 @@ public class SeaBattleController
     private static boolean rotatedShip = false;
     // Selected ship length, ship number and shipOrientation
     private static int playerShipLength = 4;
-    private static int shipNumber = 0;
+    private static int playerShipNumber = 0;
     private static String shipOrientation = "vertical";
 
     @FXML
@@ -85,73 +84,73 @@ public class SeaBattleController
 //                {
 //                    case 4:
 //                        // Place player ship
-//                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        playerShipWithFourFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
 //                        // Set proper values
-//                        if(shipNumber == 0)
+//                        if(playerShipNumber == 0)
 //                        {
 //                            playerShipLength = 3;
-//                            shipNumber = 0;
+//                            playerShipNumber = 0;
 //                        }
 //                        break;
 //                    case 3:
 //                        // Place player ship
-//                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        playerShipsWithThreeFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
 //                        // Set proper values
-//                        if(shipNumber == 2)
+//                        if(playerShipNumber == 2)
 //                        {
 //                            playerShipLength = 2;
-//                            shipNumber = 0;
+//                            playerShipNumber = 0;
 //                        }
 //                        break;
 //                    case 2:
 //                        // Place player ship
-//                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        playerShipsWithTwoFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
 //                        // Set proper values
-//                        if(shipNumber == 3)
+//                        if(playerShipNumber == 3)
 //                        {
 //                            playerShipLength = 1;
-//                            shipNumber = 0;
+//                            playerShipNumber = 0;
 //                        }
 //                        break;
 //                    case 1:
 //                        // Place player ship
-//                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        playerShipsWithOneField[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
 //                        // Set proper values
-//                        if(shipNumber == 4)
+//                        if(playerShipNumber == 4)
 //                        {
 //                            playerShipLength = 0;
-//                            shipNumber = 0;
+//                            playerShipNumber = 0;
 //                        }
 //                        break;
 //                }
-//                shipNumber++;
+//                playerShipNumber++;
 //
 //                setShipPreviewWorkingArea(shipOrientation);
 //                // Add placed ships to proper array
 ////                switch(playerShipLength)
 ////                {
 ////                    case 4:
-////                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        playerShipWithFourFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
 ////                        // Set default ship number for other ship types
-////                        shipNumber = 0;
+////                        playerShipNumber = 0;
 ////                        break;
 ////                    case 3:
-////                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        playerShipsWithThreeFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
 ////                        // Set default ship number for other ship types
-////                        if(shipNumber == 1)
-////                            shipNumber = 0;
+////                        if(playerShipNumber == 1)
+////                            playerShipNumber = 0;
 ////                        break;
 ////                    case 2:
-////                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        playerShipsWithTwoFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
 ////                        // Set default ship number for other ship types
-////                        if(shipNumber == 2)
-////                            shipNumber = 0;
+////                        if(playerShipNumber == 2)
+////                            playerShipNumber = 0;
 ////                        break;
 ////                    case 1:
-////                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        playerShipsWithOneField[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
 ////                        // Set default ship number for other ship types
-////                        if(shipNumber == 3)
-////                            shipNumber = 0;
+////                        if(playerShipNumber == 3)
+////                            playerShipNumber = 0;
 ////                        break;
 ////                }
 //            }
@@ -183,12 +182,12 @@ public class SeaBattleController
         SeaBattleController.playerShipLength = playerShipLength;
     }
 
-    public static int getShipNumber() {
-        return shipNumber;
+    public static int getPlayerShipNumber() {
+        return playerShipNumber;
     }
 
-    public static void setShipNumber(int shipNumber) {
-        SeaBattleController.shipNumber = shipNumber;
+    public static void setPlayerShipNumber(int playerShipNumber) {
+        SeaBattleController.playerShipNumber = playerShipNumber;
     }
 
     public static String getShipOrientation() {
@@ -228,6 +227,8 @@ public class SeaBattleController
                 SeaBattleCell seaBattleCell = new SeaBattleCell(row, column, false);
                 // Add button to array
                 computerSeaBattleCells[row][column] = seaBattleCell;
+                // Add button to GridPane
+                computerGridPane.add(seaBattleCell, column, row);
             }
         }
         // Prepare computer ships
@@ -392,110 +393,49 @@ public class SeaBattleController
     // This method places computer ships into GridPane container fields
     private void placeComputerShips()
     {
+
         System.out.println("-------------------------------------------------------------");
+        // Set proper number of ships
+        int numberOfShips = 1;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        changeSeaBattleCellBackgroundColor(4, numberOfShips - 1, true);
+
         for(Ship ship : computerShipWithFourFields)
         {
             System.out.println(ship);
-            // Add ToggleButtons to GridPane in proper fields
-            if(ship.getOrientation().equals("horizontal"))
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
-            else
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
         }
-
         System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(3, shipNumber, true);
+
         for(Ship ship : computerShipsWithThreeFields)
         {
             System.out.println(ship);
-            // Add ToggleButtons to GridPane in proper fields
-            if(ship.getOrientation().equals("horizontal"))
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
-            else
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
         }
         System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(2, shipNumber, true);
+
         for(Ship ship : computerShipsWithTwoFields)
         {
             System.out.println(ship);
-            // Add ToggleButtons to GridPane in proper fields
-            if(ship.getOrientation().equals("horizontal"))
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
-            else
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
         }
         System.out.println("-------------------------------------------------------------");
+        // Increase number of ships
+        numberOfShips++;
+        // Place computer ship (change proper buttons background and check if ship can be placed there)
+        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
+            changeSeaBattleCellBackgroundColor(1, shipNumber, true);
+
         for(Ship ship : computerShipsWithOneField)
         {
             System.out.println(ship);
-            // Add ToggleButtons to GridPane in proper fields
-            if(ship.getOrientation().equals("horizontal"))
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
-            else
-            {
-                for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-                {
-                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
-                    seaBattleCell.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-
-                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
-                }
-            }
         }
     }
     // This method checks if ship position is correct
@@ -626,20 +566,22 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipWithFourFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    playerShipWithFourFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
 
-                    if(playerShipWithFourFields[shipNumber] != null)
+                    if(playerShipWithFourFields[playerShipNumber] != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor();
+                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
 
                         // Set proper values
-                        shipNumber++;
-                        if(shipNumber == 1)
+                        playerShipNumber++;
+                        if(playerShipNumber == 1)
                         {
                             playerShipLength = 3;
-                            shipNumber = 0;
+                            playerShipNumber = 0;
                         }
+                        // Set default ship orientation
+                        shipOrientation = "vertical";
                     }
                 }
                 break;
@@ -651,20 +593,22 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipsWithThreeFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    playerShipsWithThreeFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
 
-                    if(playerShipsWithThreeFields[shipNumber] != null)
+                    if(playerShipsWithThreeFields[playerShipNumber] != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor();
+                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
 
                         // Set proper values
-                        shipNumber++;
-                        if(shipNumber == 2)
+                        playerShipNumber++;
+                        if(playerShipNumber == 2)
                         {
                             playerShipLength = 2;
-                            shipNumber = 0;
+                            playerShipNumber = 0;
                         }
+                        // Set default ship orientation
+                        shipOrientation = "vertical";
                     }
                 }
                 break;
@@ -676,20 +620,22 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipsWithTwoFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    playerShipsWithTwoFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
 
-                    if(playerShipsWithTwoFields[shipNumber] != null)
+                    if(playerShipsWithTwoFields[playerShipNumber] != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor();
+                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
 
                         // Set proper values
-                        shipNumber++;
-                        if(shipNumber == 3)
+                        playerShipNumber++;
+                        if(playerShipNumber == 3)
                         {
                             playerShipLength = 1;
-                            shipNumber = 0;
+                            playerShipNumber = 0;
                         }
+                        // Set default ship orientation
+                        shipOrientation = "vertical";
                     }
                 }
                 break;
@@ -702,66 +648,102 @@ public class SeaBattleController
                 else
                 {
                     // Create 1-field ship
-                    playerShipsWithOneField[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    playerShipsWithOneField[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
 
-                    if(playerShipsWithOneField[shipNumber] != null)
+                    if(playerShipsWithOneField[playerShipNumber] != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor();
+                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
 
                         // Set proper values
-                        shipNumber++;
-                        if(shipNumber == 4)
+                        playerShipNumber++;
+                        if(playerShipNumber == 4)
                         {
                             playerShipLength = 0;
-                            shipNumber = 0;
+                            playerShipNumber = 0;
                         }
+                        // Set default ship orientation
+                        shipOrientation = "vertical";
                     }
                 }
                 break;
         }
-        // Set default ship orientation
-        shipOrientation = "vertical";
         // Show new ship preview
         setShipPreviewWorkingArea(shipOrientation);
     }
 
     // This method changes buttons background color
-    private void changeSeaBattleCellBackgroundColor()
+    private void changeSeaBattleCellBackgroundColor(int shipLength, int shipNumber, boolean changeComputerSeaBattleCells)
     {
         // Temporary array
         ShipCoordinates[] tempShipCoordinates = null;
 
         // Use proper array
-        switch(playerShipLength)
+        switch(shipLength)
         {
             case 1:
-                tempShipCoordinates = playerShipsWithOneField[shipNumber].getShipCoordinates();
+                if(changeComputerSeaBattleCells)
+                    tempShipCoordinates = computerShipsWithOneField[shipNumber].getShipCoordinates();
+                else
+                    tempShipCoordinates = playerShipsWithOneField[shipNumber].getShipCoordinates();
                 break;
             case 2:
-                tempShipCoordinates = playerShipsWithTwoFields[shipNumber].getShipCoordinates();
+                if(changeComputerSeaBattleCells)
+                    tempShipCoordinates = computerShipsWithTwoFields[shipNumber].getShipCoordinates();
+                else
+                    tempShipCoordinates = playerShipsWithTwoFields[shipNumber].getShipCoordinates();
                 break;
             case 3:
-                tempShipCoordinates = playerShipsWithThreeFields[shipNumber].getShipCoordinates();
+                if(changeComputerSeaBattleCells)
+                    tempShipCoordinates = computerShipsWithThreeFields[shipNumber].getShipCoordinates();
+                else
+                    tempShipCoordinates = playerShipsWithThreeFields[shipNumber].getShipCoordinates();
                 break;
             case 4:
-                tempShipCoordinates = playerShipWithFourFields[shipNumber].getShipCoordinates();
+                if(changeComputerSeaBattleCells)
+                    tempShipCoordinates = computerShipWithFourFields[shipNumber].getShipCoordinates();
+                else
+                    tempShipCoordinates = playerShipWithFourFields[shipNumber].getShipCoordinates();
                 break;
         }
 
-        // Search for proper buttons and change their background color
-        if(tempShipCoordinates != null)
+        if(changeComputerSeaBattleCells)
         {
-            for(ShipCoordinates shipCoordinates : tempShipCoordinates)
+            // Search for proper buttons and change their background color
+            if(tempShipCoordinates != null)
             {
-                for(int i = 0; i < playerSeaBattleCells.length; i++)
+                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
                 {
-                    for(int j = 0; j < playerSeaBattleCells.length; j++)
+                    for(int i = 0; i < computerSeaBattleCells.length; i++)
                     {
-                        if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                        for(int j = 0; j < computerSeaBattleCells.length; j++)
                         {
-                            // Change button background color
-                            playerSeaBattleCells[i][j].setStyle("-fx-background-color: blue; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                            {
+                                // Change button background color
+                                computerSeaBattleCells[i][j].setStyle("-fx-background-color: green; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Search for proper buttons and change their background color
+            if(tempShipCoordinates != null)
+            {
+                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
+                {
+                    for(int i = 0; i < playerSeaBattleCells.length; i++)
+                    {
+                        for(int j = 0; j < playerSeaBattleCells.length; j++)
+                        {
+                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                            {
+                                // Change button background color
+                                playerSeaBattleCells[i][j].setStyle("-fx-background-color: blue; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+                            }
                         }
                     }
                 }
