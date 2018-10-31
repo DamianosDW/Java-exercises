@@ -7,12 +7,11 @@ public class FieldsOccupied
     private int columnNumber;
     private int lastPosition;
 
-    public FieldsOccupied(String orientation, int rowNumber, int columnNumber, int lastPosition)
+    public FieldsOccupied(String orientation, int rowNumber, int columnNumber)
     {
         this.orientation = orientation;
         this.rowNumber = rowNumber;
         this.columnNumber = columnNumber;
-        this.lastPosition = lastPosition;
     }
     // Getters
     public String getOrientation() {
@@ -33,6 +32,6 @@ public class FieldsOccupied
 
     @Override
     public String toString() {
-        return "Fields occupied - orientation: " + orientation + ", rowNumber: " + rowNumber + ", columnNumber: " + columnNumber + ", lastPosition: " + lastPosition;
+        return "Fields occupied - orientation: " + orientation + ", rowNumber: " + rowNumber + ", columnNumber: " + columnNumber;
     }
 }

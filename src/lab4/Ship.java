@@ -6,6 +6,7 @@ public class Ship
 {
     private Label shipInfo;
     private String orientation;
+    private ShipCoordinates[] shipCoordinates;
     private int columnNumber;
     private int endPosition;
     private int rowNumber;
@@ -22,6 +23,11 @@ public class Ship
     public String getOrientation() {
         return orientation;
     }
+
+    public ShipCoordinates[] getShipCoordinates() {
+        return shipCoordinates;
+    }
+
     public int getRowNumber() {
         return rowNumber;
     }
@@ -32,41 +38,66 @@ public class Ship
         return endPosition;
     }
 
-    public Ship(int length, String orientation, int rowNumber, int columnNumber, int endPosition)
+    public Ship(int length, String orientation, ShipCoordinates[] shipCoordinates, boolean addComputerShipsInfo)
     {
+        // Create array with ship coordinates
+        this.shipCoordinates = shipCoordinates;
         // Create new label and add it to proper container
         switch(length)
         {
             case 1:
                 shipInfo = new Label("-");
-                // Add ship info to VBox container
-                seaBattleController.getPlayerShips().getChildren().add(shipInfo);
+                // Add ship info to proper VBox container
+                if(addComputerShipsInfo)
+                    seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                else
+                    seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
             case 2:
                 shipInfo = new Label("--");
-                // Add ship info to VBox container
-                seaBattleController.getPlayerShips().getChildren().add(shipInfo);
+                // Add ship info to proper VBox container
+                if(addComputerShipsInfo)
+                    seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                else
+                    seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
             case 3:
                 shipInfo = new Label("---");
-                // Add ship info to VBox container
-                seaBattleController.getPlayerShips().getChildren().add(shipInfo);
+                // Add ship info to proper VBox container
+                if(addComputerShipsInfo)
+                    seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                else
+                    seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
             case 4:
                 shipInfo = new Label("----");
-                // Add ship info to VBox container
-                seaBattleController.getPlayerShips().getChildren().add(shipInfo);
+                // Add ship info to proper VBox container
+                if(addComputerShipsInfo)
+                    seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                else
+                    seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
         }
 
         // Set values to variables
         this.orientation = orientation;
-        this.rowNumber = rowNumber;
-        this.columnNumber = columnNumber;
-        this.endPosition = endPosition;
     }
     @Override
     public String toString() {
-        return  "Ship info: " + this.shipInfo.getText() + ", orientation: " + orientation + ", row number: " + rowNumber + ", column: " + columnNumber + ", end position: " + endPosition;
+        StringBuilder shipInfo = new StringBuilder();
+        shipInfo.append("Ship info: ");
+        if(shipCoordinates != null)
+        {
+            for(ShipCoordinates ship : shipCoordinates)
+            {
+                shipInfo.append("rowNumber = ");
+                shipInfo.append(ship.getRow());
+                shipInfo.append(", columnNumber = ");
+                shipInfo.append(ship.getColumn());
+                shipInfo.append("\n");
+            }
+        }
+        return shipInfo.toString();
+//        return  "Ship info: " + this.shipInfo.getText() + ", orientation: " + orientation + ", row number: " + rowNumber + ", column: " + columnNumber + ", end position: " + endPosition;
     }
 }

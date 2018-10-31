@@ -11,8 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<BorderPane xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab4.SeaBattleController">
+<BorderPane fx:id="mainBorderPane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lab4.SeaBattleController">
    <center>
       <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="5.0">
          <children>
@@ -210,17 +209,17 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <VBox fx:id="playerShips" alignment="CENTER" prefHeight="300.0" spacing="5.0" />
+                        <VBox fx:id="playerShips" alignment="CENTER" minHeight="225.0" spacing="5.0" />
                      </children>
                   </VBox>
-                  <VBox alignment="TOP_CENTER" prefHeight="100.0">
+                  <VBox fx:id="shipPreviewMainContainer" alignment="TOP_CENTER" prefHeight="100.0">
                      <children>
                         <Label text="Ship preview:">
                            <font>
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <FlowPane fx:id="shipPreviev" alignment="CENTER" prefHeight="200.0" />
+                        <FlowPane fx:id="shipPreviewWorkingArea" alignment="CENTER" minHeight="150.0" />
                      </children>
                   </VBox>
                </children>
@@ -420,56 +419,7 @@
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="computerFirstTypeFourShipInfo" text="----">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerFirstTypeThreeShipInfo" text="---">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerSecondTypeThreeShipInfo" text="---">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerFirstTypeTwoShipInfo" text="--">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerSecondTypeTwoShipInfo" text="--">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerThirdTypeTwoShipInfo" text="--">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerFirstTypeOneShipInfo" text="-">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerSecondTypeOneShipInfo" text="-">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerThirdTypeOneShipInfo" text="-">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="computerFourthTypeOneShipInfo" text="-">
-                     <font>
-                        <Font name="System Bold" size="16.0" />
-                     </font>
-                  </Label>
+                  <VBox fx:id="computerShips" alignment="CENTER" prefHeight="250.0" spacing="5.0" />
                </children>
                <HBox.margin>
                   <Insets top="30.0" />
