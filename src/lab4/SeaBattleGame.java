@@ -11,15 +11,12 @@ public class SeaBattleGame extends Application
 {
     private static final String fxmlPath = "main.fxml";
 
-    private static Stage stage;
-
     public static void main(String[] args) {
         // Start app
         launch(args);
     }
     @Override
     public void start(Stage primaryStage) {
-        stage = primaryStage;
         primaryStage.setTitle("SeaBattle");
 
         // Create FXMLLoader
@@ -34,9 +31,5 @@ public class SeaBattleGame extends Application
         }
         // Show app window
         primaryStage.show();
-    }
-    // Getter
-    public static Stage getStage() {
-        return stage;
     }
 }

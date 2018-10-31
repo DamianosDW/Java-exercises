@@ -46,6 +46,10 @@ public class SeaBattleController
     private static Ship[] computerShipsWithTwoFields = new Ship[3];
     private static Ship[] computerShipsWithOneField = new Ship[4];
 
+    // SeaBattleCells
+    private static SeaBattleCell[][] playerSeaBattleCells = new SeaBattleCell[10][10];
+    private static SeaBattleCell[][] computerSeaBattleCells = new SeaBattleCell[10][10];
+
     // Fields occupied by player ships
     private static List<FieldsOccupied> playerFieldsOccupied = new ArrayList<>();
     // Fields occupied by computer ships
@@ -61,99 +65,102 @@ public class SeaBattleController
     @FXML
     void initialize()
     {
-        // Pass this controller to Ship class
+        // Pass this controller to Ship and SeaBattleCell classes
         Ship.setSeaBattleController(this);
+        SeaBattleCell.setSeaBattleController(this);
 
         setShipPreviewWorkingArea(shipOrientation);
 
-        prepareComputerShips();
+        // Prepare game areas
+        preparePlayerGridPane();
+        prepareComputerGridPane();
 
-        playerGridPane.setOnMousePressed(event -> {
-            // Place ship when player press left mouse button while cursor is on player GridPane
-            if(event.isPrimaryButtonDown())
-            {
-                System.out.println("Ship placed!");
-                // Change player ship length after number of ships (with this length) is correct
-                switch(playerShipLength)
-                {
-                    case 4:
-                        // Place player ship
-                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-                        // Set proper values
-                        if(shipNumber == 0)
-                        {
-                            playerShipLength = 3;
-                            shipNumber = 0;
-                        }
-                        break;
-                    case 3:
-                        // Place player ship
-                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-                        // Set proper values
-                        if(shipNumber == 2)
-                        {
-                            playerShipLength = 2;
-                            shipNumber = 0;
-                        }
-                        break;
-                    case 2:
-                        // Place player ship
-                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-                        // Set proper values
-                        if(shipNumber == 3)
-                        {
-                            playerShipLength = 1;
-                            shipNumber = 0;
-                        }
-                        break;
-                    case 1:
-                        // Place player ship
-                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-                        // Set proper values
-                        if(shipNumber == 4)
-                        {
-                            playerShipLength = 0;
-                            shipNumber = 0;
-                        }
-                        break;
-                }
-                shipNumber++;
-
-                setShipPreviewWorkingArea(shipOrientation);
-                // Add placed ships to proper array
+//        playerGridPane.setOnMousePressed(event -> {
+//            // Place ship when player press left mouse button while cursor is on player GridPane
+//            if(event.isPrimaryButtonDown())
+//            {
+//                System.out.println("Ship placed!");
+//                // Change player ship length after number of ships (with this length) is correct
 //                switch(playerShipLength)
 //                {
 //                    case 4:
-//                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-//                        // Set default ship number for other ship types
-//                        shipNumber = 0;
+//                        // Place player ship
+//                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        // Set proper values
+//                        if(shipNumber == 0)
+//                        {
+//                            playerShipLength = 3;
+//                            shipNumber = 0;
+//                        }
 //                        break;
 //                    case 3:
-//                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-//                        // Set default ship number for other ship types
-//                        if(shipNumber == 1)
+//                        // Place player ship
+//                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        // Set proper values
+//                        if(shipNumber == 2)
+//                        {
+//                            playerShipLength = 2;
 //                            shipNumber = 0;
+//                        }
 //                        break;
 //                    case 2:
-//                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-//                        // Set default ship number for other ship types
-//                        if(shipNumber == 2)
+//                        // Place player ship
+//                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        // Set proper values
+//                        if(shipNumber == 3)
+//                        {
+//                            playerShipLength = 1;
 //                            shipNumber = 0;
+//                        }
 //                        break;
 //                    case 1:
-//                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-//                        // Set default ship number for other ship types
-//                        if(shipNumber == 3)
+//                        // Place player ship
+//                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, shipOrientation);
+//                        // Set proper values
+//                        if(shipNumber == 4)
+//                        {
+//                            playerShipLength = 0;
 //                            shipNumber = 0;
+//                        }
 //                        break;
 //                }
-            }
-            // Rotate ship when player press left mouse button while cursor is on player GridPane
-            if(event.isSecondaryButtonDown())
-            {
-                rotateShip();
-            }
-        });
+//                shipNumber++;
+//
+//                setShipPreviewWorkingArea(shipOrientation);
+//                // Add placed ships to proper array
+////                switch(playerShipLength)
+////                {
+////                    case 4:
+////                        playerShipWithFourFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        // Set default ship number for other ship types
+////                        shipNumber = 0;
+////                        break;
+////                    case 3:
+////                        playerShipsWithThreeFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        // Set default ship number for other ship types
+////                        if(shipNumber == 1)
+////                            shipNumber = 0;
+////                        break;
+////                    case 2:
+////                        playerShipsWithTwoFields[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        // Set default ship number for other ship types
+////                        if(shipNumber == 2)
+////                            shipNumber = 0;
+////                        break;
+////                    case 1:
+////                        playerShipsWithOneField[shipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
+////                        // Set default ship number for other ship types
+////                        if(shipNumber == 3)
+////                            shipNumber = 0;
+////                        break;
+////                }
+//            }
+//            // Rotate ship when player press right mouse button while cursor is on player GridPane
+//            if(event.isSecondaryButtonDown())
+//            {
+//                rotateShip();
+//            }
+//        });
 
 //        for(FieldsOccupied fieldsOccupied : computerFieldsOccupied)
 //            System.out.println(fieldsOccupied);
@@ -168,45 +175,99 @@ public class SeaBattleController
         return computerShips;
     }
 
-    public void setMainStage(Stage mainStage)
+    public static int getPlayerShipLength() {
+        return playerShipLength;
+    }
+
+    public static void setPlayerShipLength(int playerShipLength) {
+        SeaBattleController.playerShipLength = playerShipLength;
+    }
+
+    public static int getShipNumber() {
+        return shipNumber;
+    }
+
+    public static void setShipNumber(int shipNumber) {
+        SeaBattleController.shipNumber = shipNumber;
+    }
+
+    public static String getShipOrientation() {
+        return shipOrientation;
+    }
+
+    public static void setShipOrientation(String shipOrientation) {
+        SeaBattleController.shipOrientation = shipOrientation;
+    }
+
+    // Prepare game area for player
+    private void preparePlayerGridPane()
     {
-        this.mainStage = mainStage;
+        // Add buttons to all gridpane fields
+        for(int row = 0; row < 10; row++)
+        {
+            for(int column = 0; column < 10; column++)
+            {
+                // Create button
+                SeaBattleCell seaBattleCell = new SeaBattleCell(row, column, true);
+                // Add button to array
+                playerSeaBattleCells[row][column] = seaBattleCell;
+                // Add button to GridPane
+                playerGridPane.add(seaBattleCell, column, row);
+            }
+        }
+    }
+    // Prepare game area for computer
+    private void prepareComputerGridPane()
+    {
+        // Add buttons to all gridpane fields
+        for(int row = 0; row < 10; row++)
+        {
+            for(int column = 0; column < 10; column++)
+            {
+                // Create button
+                SeaBattleCell seaBattleCell = new SeaBattleCell(row, column, false);
+                // Add button to array
+                computerSeaBattleCells[row][column] = seaBattleCell;
+            }
+        }
+        // Prepare computer ships
+        prepareComputerShips();
     }
 
     // Prepare computer ships
     private void prepareComputerShips()
     {
         // Create 4-fields ship
-        computerShipWithFourFields[0] = createShip(4);
+        computerShipWithFourFields[0] = createComputerShip(4);
         System.out.println("Umieszczono statek złożony z 4 pól!");
         // Create 3-fields ships
-        computerShipsWithThreeFields[0] = createShip(3);
+        computerShipsWithThreeFields[0] = createComputerShip(3);
         System.out.println("Umieszczono statek złożony z 3 pól!");
-        computerShipsWithThreeFields[1] = createShip(3);
+        computerShipsWithThreeFields[1] = createComputerShip(3);
         System.out.println("Umieszczono statek złożony z 3 pól!");
         // Create 2-fields ships
-        computerShipsWithTwoFields[0] = createShip(2);
+        computerShipsWithTwoFields[0] = createComputerShip(2);
         System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[1] = createShip(2);
+        computerShipsWithTwoFields[1] = createComputerShip(2);
         System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[2] = createShip(2);
+        computerShipsWithTwoFields[2] = createComputerShip(2);
         System.out.println("Umieszczono statek złożony z 2 pól!");
         // Create 1-field ships
-        computerShipsWithOneField[0] = createShip(1);
+        computerShipsWithOneField[0] = createComputerShip(1);
         System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[1] = createShip(1);
+        computerShipsWithOneField[1] = createComputerShip(1);
         System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[2] = createShip(1);
+        computerShipsWithOneField[2] = createComputerShip(1);
         System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[3] = createShip(1);
+        computerShipsWithOneField[3] = createComputerShip(1);
         System.out.println("Umieszczono statek złożony z 1 pola!");
 
         placeComputerShips();
 
     }
 
-    // This method creates ship with defined length
-    private Ship createShip(int length)
+    // This method creates ship for computer with defined length
+    private Ship createComputerShip(int length)
     {
         String orientation;
         int columnNumber = 0;
@@ -340,18 +401,20 @@ public class SeaBattleController
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
             else
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: green; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
         }
@@ -365,18 +428,20 @@ public class SeaBattleController
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
             else
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: blue; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
         }
@@ -389,18 +454,20 @@ public class SeaBattleController
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
             else
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: red; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
         }
@@ -413,23 +480,24 @@ public class SeaBattleController
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
             else
             {
                 for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
                 {
-                    ToggleButton toggleButton = new ToggleButton("S");
-                    toggleButton.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                    computerGridPane.add(toggleButton, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
+                    SeaBattleCell seaBattleCell = new SeaBattleCell(shipCoordinates.getRow() - 1, shipCoordinates.getColumn() - 1, false);
+                    seaBattleCell.setStyle("-fx-background-color: orange; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+
+                    computerGridPane.add(seaBattleCell, shipCoordinates.getColumn() - 1, shipCoordinates.getRow() - 1);
                 }
             }
         }
     }
-
     // This method checks if ship position is correct
     private boolean checkIfShipPositionIsCorrect(ShipCoordinates[] shipCoordinates, boolean checkComputerShips)
     {
@@ -466,20 +534,242 @@ public class SeaBattleController
             return true;
         }
     }
-    // This method places player ship in game area
-    private Ship placePlayerShip(int length, String orientation)
+
+    // This method creates ship for player with defined length
+    private Ship createPlayerShip(int rowNumber, int columnNumber)
     {
         // Create temp array with ship coordinates
+        ShipCoordinates[] shipCoordinates = new ShipCoordinates[playerShipLength];
 
-//        ShipCoordinates[] shipCoordinates = new ShipCoordinates[length];
+        // Put ship into fields
+        switch(shipOrientation)
+        {
+            case "horizontal":
+                // Add first field to array
+                shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
+                // Add another fields to array
+                for(int i = 1; i < playerShipLength; i++)
+                {
+                    shipCoordinates[i] = new ShipCoordinates(rowNumber, ++columnNumber);
+                }
+                break;
+            case "vertical":
+                // Add first field to array
+                shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
+                // Add another fields to array
+                for(int i = 1; i < playerShipLength; i++)
+                {
+                    shipCoordinates[i] = new ShipCoordinates(++rowNumber, columnNumber);
+                }
+                break;
+        }
 
+        // Check if ship coordinates are free
+        if(!checkIfShipPositionIsCorrect(shipCoordinates, false))
+        {
+            // Show error dialog
+            showErrorDialog("You can't place ship there, because it's next to other ship or on other ship!");
+            return null;
+        }
+        else
+        {
+            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ". Orientation: " + shipOrientation);
 
-        return null;
-        // Create ship object
-//        return new Ship(length, shipOrientation, shipCoordinates, false);
+            // Insert information about occupied fields to list
+            if(shipOrientation.equals("vertical"))
+            {
+                for(ShipCoordinates ship : shipCoordinates)
+                {
+                    // Add fields occupied by ship to list
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn()));
+                    // Add fields next to the ship to list
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
+
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
+                }
+            }
+            else
+            {
+                for(ShipCoordinates ship : shipCoordinates)
+                {
+                    // Add fields occupied by ship to list
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn()));
+                    // Add fields next to the ship to list
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
+
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
+                }
+            }
+
+            return new Ship(playerShipLength, shipOrientation, shipCoordinates, false);
+        }
+    }
+    // This method places player ship in game area
+    public void placePlayerShip(int rowNumber, int columnNumber)
+    {
+        // Change player ship length after number of ships (with this length) is correct
+        switch(playerShipLength)
+        {
+            case 4:
+                // Show error dialog when ship is out of game area boundaries
+                if((shipOrientation.equals("horizontal") && columnNumber > 6) || (shipOrientation.equals("vertical") && rowNumber > 6))
+                {
+                    showErrorDialog("You can't place your ship there, because it's out of game area boundaries!");
+                }
+                else
+                {
+                    playerShipWithFourFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+
+                    if(playerShipWithFourFields[shipNumber] != null)
+                    {
+                        // Place player ship (change proper buttons background and check if ship can be placed there)
+                        changeSeaBattleCellBackgroundColor();
+
+                        // Set proper values
+                        shipNumber++;
+                        if(shipNumber == 1)
+                        {
+                            playerShipLength = 3;
+                            shipNumber = 0;
+                        }
+                    }
+                }
+                break;
+            case 3:
+                // Show error dialog when ship is out of game area boundaries
+                if((shipOrientation.equals("horizontal") && columnNumber > 7) || (shipOrientation.equals("vertical") && rowNumber > 7))
+                {
+                    showErrorDialog("You can't place your ship there, because it's out of game area boundaries!");
+                }
+                else
+                {
+                    playerShipsWithThreeFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+
+                    if(playerShipsWithThreeFields[shipNumber] != null)
+                    {
+                        // Place player ship (change proper buttons background and check if ship can be placed there)
+                        changeSeaBattleCellBackgroundColor();
+
+                        // Set proper values
+                        shipNumber++;
+                        if(shipNumber == 2)
+                        {
+                            playerShipLength = 2;
+                            shipNumber = 0;
+                        }
+                    }
+                }
+                break;
+            case 2:
+                // Show error dialog when ship is out of game area boundaries
+                if((shipOrientation.equals("horizontal") && columnNumber > 8) || (shipOrientation.equals("vertical") && rowNumber > 8))
+                {
+                    showErrorDialog("You can't place your ship there, because it's out of game area boundaries!");
+                }
+                else
+                {
+                    playerShipsWithTwoFields[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+
+                    if(playerShipsWithTwoFields[shipNumber] != null)
+                    {
+                        // Place player ship (change proper buttons background and check if ship can be placed there)
+                        changeSeaBattleCellBackgroundColor();
+
+                        // Set proper values
+                        shipNumber++;
+                        if(shipNumber == 3)
+                        {
+                            playerShipLength = 1;
+                            shipNumber = 0;
+                        }
+                    }
+                }
+                break;
+            case 1:
+                // Show error dialog when ship is out of game area boundaries
+                if((shipOrientation.equals("horizontal") && columnNumber > 9) || (shipOrientation.equals("vertical") && rowNumber > 9))
+                {
+                    showErrorDialog("You can't place your ship there, because it's out of game area boundaries!");
+                }
+                else
+                {
+                    // Create 1-field ship
+                    playerShipsWithOneField[shipNumber] = createPlayerShip(rowNumber, columnNumber);
+
+                    if(playerShipsWithOneField[shipNumber] != null)
+                    {
+                        // Place player ship (change proper buttons background and check if ship can be placed there)
+                        changeSeaBattleCellBackgroundColor();
+
+                        // Set proper values
+                        shipNumber++;
+                        if(shipNumber == 4)
+                        {
+                            playerShipLength = 0;
+                            shipNumber = 0;
+                        }
+                    }
+                }
+                break;
+        }
+        // Set default ship orientation
+        shipOrientation = "vertical";
+        // Show new ship preview
+        setShipPreviewWorkingArea(shipOrientation);
+    }
+
+    // This method changes buttons background color
+    private void changeSeaBattleCellBackgroundColor()
+    {
+        // Temporary array
+        ShipCoordinates[] tempShipCoordinates = null;
+
+        // Use proper array
+        switch(playerShipLength)
+        {
+            case 1:
+                tempShipCoordinates = playerShipsWithOneField[shipNumber].getShipCoordinates();
+                break;
+            case 2:
+                tempShipCoordinates = playerShipsWithTwoFields[shipNumber].getShipCoordinates();
+                break;
+            case 3:
+                tempShipCoordinates = playerShipsWithThreeFields[shipNumber].getShipCoordinates();
+                break;
+            case 4:
+                tempShipCoordinates = playerShipWithFourFields[shipNumber].getShipCoordinates();
+                break;
+        }
+
+        // Search for proper buttons and change their background color
+        if(tempShipCoordinates != null)
+        {
+            for(ShipCoordinates shipCoordinates : tempShipCoordinates)
+            {
+                for(int i = 0; i < playerSeaBattleCells.length; i++)
+                {
+                    for(int j = 0; j < playerSeaBattleCells.length; j++)
+                    {
+                        if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                        {
+                            // Change button background color
+                            playerSeaBattleCells[i][j].setStyle("-fx-background-color: blue; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+                        }
+                    }
+                }
+            }
+        }
     }
     // This method rotates player ship
-    private void rotateShip() //TODO NAPISAC CALA FUNKCJONALNOSC
+    public void rotateShip()
     {
         if(shipOrientation.equals("vertical"))
         {
@@ -518,7 +808,12 @@ public class SeaBattleController
     {
         // Show start game dialog when player placed all ships
         if(playerShipLength == 0)
+        {
             showStartGameDialogAndHideShipPreview();
+            // Prevent from showing dialog after game was started
+            playerShipLength = -1;
+        }
+
 
         // Clear ship preview container
         shipPreviewWorkingArea.getChildren().clear();
@@ -534,8 +829,17 @@ public class SeaBattleController
                 for(int i = 0; i < playerShipLength; i++)
                 {
                     // Create button that will be used to show ship view
-                    Button button = new Button();
-                    button.setStyle("-fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    Button button;
+                    if(i == 0)
+                    {
+                        button = new Button("X");
+                        button.setStyle("-fx-text-fill: white; -fx-padding: 4; -fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    }
+                    else
+                    {
+                        button = new Button();
+                        button.setStyle("-fx-text-fill: white; -fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    }
                     button.setDisable(true);
                     // Add button to temp container
                     vBox.getChildren().add(button);
@@ -551,8 +855,17 @@ public class SeaBattleController
                 for(int i = 0; i < playerShipLength; i++)
                 {
                     // Create button that will be used to show ship view
-                    Button button = new Button();
-                    button.setStyle("-fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    Button button;
+                    if(i == 0)
+                    {
+                        button = new Button("X");
+                        button.setStyle("-fx-text-fill: white; -fx-padding: 4; -fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    }
+                    else
+                    {
+                        button = new Button();
+                        button.setStyle("-fx-text-fill: white; -fx-background-color: black; -fx-background-radius: 0; -fx-border-color: silver; -fx-border-width: 1; -fx-pref-width: 15; -fx-pref-height: 15;");
+                    }
                     button.setDisable(true);
                     // Add button to temp container
                     hBox.getChildren().add(button);
@@ -572,5 +885,13 @@ public class SeaBattleController
         info.showAndWait();
         // Hide ship preview container
         shipPreviewMainContainer.setVisible(false);
+    }
+
+    private void showErrorDialog(String message)
+    {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.show();
     }
 }

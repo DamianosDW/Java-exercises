@@ -209,7 +209,7 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <VBox fx:id="playerShips" alignment="CENTER" minHeight="225.0" spacing="5.0" />
+                        <VBox fx:id="playerShips" alignment="CENTER" minHeight="250.0" spacing="5.0" />
                      </children>
                   </VBox>
                   <VBox fx:id="shipPreviewMainContainer" alignment="TOP_CENTER" prefHeight="100.0">
@@ -219,7 +219,7 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Label>
-                        <FlowPane fx:id="shipPreviewWorkingArea" alignment="CENTER" minHeight="150.0" />
+                        <FlowPane fx:id="shipPreviewWorkingArea" alignment="CENTER" minHeight="130.0" />
                      </children>
                   </VBox>
                </children>

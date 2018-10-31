@@ -23,7 +23,6 @@ public class Ship
     public String getOrientation() {
         return orientation;
     }
-
     public ShipCoordinates[] getShipCoordinates() {
         return shipCoordinates;
     }
@@ -47,6 +46,7 @@ public class Ship
         {
             case 1:
                 shipInfo = new Label("-");
+                shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
@@ -55,6 +55,7 @@ public class Ship
                 break;
             case 2:
                 shipInfo = new Label("--");
+                shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
@@ -63,6 +64,7 @@ public class Ship
                 break;
             case 3:
                 shipInfo = new Label("---");
+                shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
@@ -71,6 +73,7 @@ public class Ship
                 break;
             case 4:
                 shipInfo = new Label("----");
+                shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
