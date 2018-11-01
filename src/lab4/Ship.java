@@ -7,6 +7,7 @@ public class Ship
     private Label shipInfo;
     private String orientation;
     private ShipCoordinates[] shipCoordinates;
+    private int shipLength;
     private int columnNumber;
     private int endPosition;
     private int rowNumber;
@@ -26,7 +27,9 @@ public class Ship
     public ShipCoordinates[] getShipCoordinates() {
         return shipCoordinates;
     }
-
+    public int getShipLength() {
+        return shipLength;
+    }
     public int getRowNumber() {
         return rowNumber;
     }
@@ -37,19 +40,22 @@ public class Ship
         return endPosition;
     }
 
-    public Ship(int length, String orientation, ShipCoordinates[] shipCoordinates, boolean addComputerShipsInfo)
+    public Ship(int shipLength, String orientation, ShipCoordinates[] shipCoordinates, boolean addComputerShipsInfo)
     {
         // Create array with ship coordinates
         this.shipCoordinates = shipCoordinates;
         // Create new label and add it to proper container
-        switch(length)
+        switch(shipLength)
         {
             case 1:
                 shipInfo = new Label("-");
                 shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
+                {
+                    shipInfo.setVisible(false);
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                }
                 else
                     seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
@@ -58,7 +64,10 @@ public class Ship
                 shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
+                {
+                    shipInfo.setVisible(false);
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                }
                 else
                     seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
@@ -67,7 +76,10 @@ public class Ship
                 shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
+                {
+                    shipInfo.setVisible(false);
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                }
                 else
                     seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
@@ -76,7 +88,10 @@ public class Ship
                 shipInfo.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
                 // Add ship info to proper VBox container
                 if(addComputerShipsInfo)
+                {
+                    shipInfo.setVisible(false);
                     seaBattleController.getComputerShips().getChildren().add(shipInfo);
+                }
                 else
                     seaBattleController.getPlayerShips().getChildren().add(shipInfo);
                 break;
@@ -84,6 +99,7 @@ public class Ship
 
         // Set values to variables
         this.orientation = orientation;
+        this.shipLength = shipLength;
     }
     @Override
     public String toString() {

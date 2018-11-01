@@ -436,11 +436,25 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </Label>
-            <Label fx:id="scoreLabel" text="--:--">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </Label>
+            <HBox alignment="CENTER">
+               <children>
+                  <Label fx:id="playerScoreLabel" text="-">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label text=":">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="computerScoreLabel" text="-">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
          </children>
          <BorderPane.margin>
             <Insets />

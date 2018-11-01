@@ -20,7 +20,9 @@ public class SeaBattleController
     @FXML
     private GridPane computerGridPane;
     @FXML
-    private Label scoreLabel;
+    private Label playerScoreLabel;
+    @FXML
+    private Label computerScoreLabel;
     @FXML
     private VBox shipPreviewMainContainer;
     @FXML
@@ -29,9 +31,6 @@ public class SeaBattleController
     private VBox playerShips;
     @FXML
     private VBox computerShips;
-
-    // App stage
-    private Stage mainStage;
 
     // Player ships
     private static Ship[] playerShipWithFourFields = new Ship[1];
@@ -54,12 +53,14 @@ public class SeaBattleController
     // Fields occupied by computer ships
     private static List<FieldsOccupied> computerFieldsOccupied = new ArrayList<>();
 
-    // Player ship rotation
-    private static boolean rotatedShip = false;
     // Selected ship length, ship number and shipOrientation
     private static int playerShipLength = 4;
     private static int playerShipNumber = 0;
     private static String shipOrientation = "vertical";
+
+    // Scores
+    private static int playerScore = 0;
+    private static int computerScore = 0;
 
     @FXML
     void initialize()
@@ -73,127 +74,30 @@ public class SeaBattleController
         // Prepare game areas
         preparePlayerGridPane();
         prepareComputerGridPane();
-
-//        playerGridPane.setOnMousePressed(event -> {
-//            // Place ship when player press left mouse button while cursor is on player GridPane
-//            if(event.isPrimaryButtonDown())
-//            {
-//                System.out.println("Ship placed!");
-//                // Change player ship length after number of ships (with this length) is correct
-//                switch(playerShipLength)
-//                {
-//                    case 4:
-//                        // Place player ship
-//                        playerShipWithFourFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-//                        // Set proper values
-//                        if(playerShipNumber == 0)
-//                        {
-//                            playerShipLength = 3;
-//                            playerShipNumber = 0;
-//                        }
-//                        break;
-//                    case 3:
-//                        // Place player ship
-//                        playerShipsWithThreeFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-//                        // Set proper values
-//                        if(playerShipNumber == 2)
-//                        {
-//                            playerShipLength = 2;
-//                            playerShipNumber = 0;
-//                        }
-//                        break;
-//                    case 2:
-//                        // Place player ship
-//                        playerShipsWithTwoFields[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-//                        // Set proper values
-//                        if(playerShipNumber == 3)
-//                        {
-//                            playerShipLength = 1;
-//                            playerShipNumber = 0;
-//                        }
-//                        break;
-//                    case 1:
-//                        // Place player ship
-//                        playerShipsWithOneField[playerShipNumber] = placePlayerShip(playerShipLength, shipOrientation);
-//                        // Set proper values
-//                        if(playerShipNumber == 4)
-//                        {
-//                            playerShipLength = 0;
-//                            playerShipNumber = 0;
-//                        }
-//                        break;
-//                }
-//                playerShipNumber++;
-//
-//                setShipPreviewWorkingArea(shipOrientation);
-//                // Add placed ships to proper array
-////                switch(playerShipLength)
-////                {
-////                    case 4:
-////                        playerShipWithFourFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-////                        // Set default ship number for other ship types
-////                        playerShipNumber = 0;
-////                        break;
-////                    case 3:
-////                        playerShipsWithThreeFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-////                        // Set default ship number for other ship types
-////                        if(playerShipNumber == 1)
-////                            playerShipNumber = 0;
-////                        break;
-////                    case 2:
-////                        playerShipsWithTwoFields[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-////                        // Set default ship number for other ship types
-////                        if(playerShipNumber == 2)
-////                            playerShipNumber = 0;
-////                        break;
-////                    case 1:
-////                        playerShipsWithOneField[playerShipNumber] = placePlayerShip(playerShipLength, (rotatedShip) ? "horizontal" : "vertical");
-////                        // Set default ship number for other ship types
-////                        if(playerShipNumber == 3)
-////                            playerShipNumber = 0;
-////                        break;
-////                }
-//            }
-//            // Rotate ship when player press right mouse button while cursor is on player GridPane
-//            if(event.isSecondaryButtonDown())
-//            {
-//                rotateShip();
-//            }
-//        });
-
-//        for(FieldsOccupied fieldsOccupied : computerFieldsOccupied)
-//            System.out.println(fieldsOccupied);
     }
 
     // Getters and setters
     public VBox getPlayerShips() {
         return playerShips;
     }
-
     public VBox getComputerShips() {
         return computerShips;
     }
-
     public static int getPlayerShipLength() {
         return playerShipLength;
     }
-
     public static void setPlayerShipLength(int playerShipLength) {
         SeaBattleController.playerShipLength = playerShipLength;
     }
-
     public static int getPlayerShipNumber() {
         return playerShipNumber;
     }
-
     public static void setPlayerShipNumber(int playerShipNumber) {
         SeaBattleController.playerShipNumber = playerShipNumber;
     }
-
     public static String getShipOrientation() {
         return shipOrientation;
     }
-
     public static void setShipOrientation(String shipOrientation) {
         SeaBattleController.shipOrientation = shipOrientation;
     }
@@ -720,23 +624,23 @@ public class SeaBattleController
         if(changeComputerSeaBattleCells)
         {
             // Search for proper buttons and change their background color
-            if(tempShipCoordinates != null)
-            {
-                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
-                {
-                    for(int i = 0; i < computerSeaBattleCells.length; i++)
-                    {
-                        for(int j = 0; j < computerSeaBattleCells.length; j++)
-                        {
-                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
-                            {
-                                // Change button background color
-                                computerSeaBattleCells[i][j].setStyle("-fx-background-color: green; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                            }
-                        }
-                    }
-                }
-            }
+//            if(tempShipCoordinates != null)
+//            {
+//                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
+//                {
+//                    for(int i = 0; i < computerSeaBattleCells.length; i++)
+//                    {
+//                        for(int j = 0; j < computerSeaBattleCells.length; j++)
+//                        {
+//                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+//                            {
+//                                // Change button background color
+//                                computerSeaBattleCells[i][j].setStyle("-fx-background-color: green; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
         else
         {
@@ -878,6 +782,8 @@ public class SeaBattleController
         info.showAndWait();
         // Hide ship preview container
         shipPreviewMainContainer.setVisible(false);
+        // Start game
+        startGame();
     }
     private void showErrorDialog(String message)
     {
@@ -885,5 +791,342 @@ public class SeaBattleController
         alert.setTitle("Error");
         alert.setHeaderText(message);
         alert.show();
+    }
+    private void showEndGameDialog(int playerScore, int computerScore)
+    {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game over");
+
+        if(playerScore > computerScore)
+            alert.setHeaderText("Game over! You won! Take a look at the game statistics.");
+        else
+            alert.setHeaderText("Game over! You lost! Take a look at the game statistics.");
+
+        alert.setContentText("You destroyed " + playerScore + " ship parts!\nComputer destroyed " + computerScore + " ship parts!");
+        alert.showAndWait();
+    }
+    // This method configures buttons and labels to start sea battle game
+    private void startGame()
+    {
+        // Change all buttons action
+        for(int i = 0; i < computerSeaBattleCells.length; i++)
+        {
+            for(int j = 0; j < computerSeaBattleCells.length; j++)
+            {
+                SeaBattleCell computerSeaBattleCell = computerSeaBattleCells[i][j];
+                SeaBattleCell playerSeaBattleCell = playerSeaBattleCells[i][j];
+                // Clear buttons action
+                computerSeaBattleCell.setOnMouseDragged(event -> {});
+                playerSeaBattleCell.setOnMouseDragged(event -> {});
+                // Set new action
+                computerSeaBattleCell.setOnAction(event ->
+                {
+                    System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + computerSeaBattleCell.getRowNumber() + ", columnNumber = " + computerSeaBattleCell.getColumnNumber());
+
+                    markSelectedField(computerSeaBattleCell.getRowNumber(), computerSeaBattleCell.getColumnNumber());
+                });
+            }
+        }
+        // Set default score
+        playerScoreLabel.setText(playerScore + "");
+        computerScoreLabel.setText(computerScore + "");
+    }
+    // This method disabled all containers and shows end game information
+    private void endGame()
+    {
+        // Disable containers
+        playerGridPane.setDisable(true);
+        computerGridPane.setDisable(true);
+        // Show end game dialog
+        showEndGameDialog(playerScore, computerScore);
+    }
+    // This method reveals selected field and updates score label
+    private void markSelectedField(int rowNumber, int columnNumber) //TODO NAPRAWIC OZNACZANIE POL
+    {
+        boolean shipIsDamagedByPlayer;
+        boolean shipIsDamagedByComputer;
+
+        // Player's turn
+        shipIsDamagedByPlayer = checkIfPlayerDamagedShip(rowNumber, columnNumber);
+
+        if(shipIsDamagedByPlayer)
+        {
+            // Mark damaged ship part
+            computerSeaBattleCells[rowNumber][columnNumber].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+            // Disable button
+            computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
+            System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
+//            for(int i = 0; i < computerSeaBattleCells.length; i++)
+//            {
+//                for(int j = 0; j < computerSeaBattleCells.length; j++)
+//                {
+//                    if(i == rowNumber && j == columnNumber)
+//                    {
+//                        // Change button background color
+//                        computerSeaBattleCells[i][j].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+//                        // Disable button
+//                        computerSeaBattleCells[i][j].setDisable(true);
+//                    }
+//                }
+//            }
+
+            updateShipInfo(true, rowNumber, columnNumber);
+
+            // Update score info when ship is hit by player
+            playerScore++;
+            playerScoreLabel.setText(playerScore + "");
+            System.out.println("Marked damaged ship part (player)!");
+            // End game if all ships were destroyed
+            if(playerScore == 20)
+                endGame();
+        }
+        else
+        {
+            // Mark empty field
+            // Add 'X' to button
+            computerSeaBattleCells[rowNumber][columnNumber].setText("X");
+            // Disable button
+            computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
+            System.out.println("Empty computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
+//            for(int i = 0; i < computerSeaBattleCells.length; i++)
+//            {
+//                for(int j = 0; j < computerSeaBattleCells.length; j++)
+//                {
+//                    if(i == rowNumber && j == columnNumber)
+//                    {
+//
+//                        // Add 'X' to button
+//                        computerSeaBattleCells[i][j].setText("X");
+//                        // Disable button
+//                        computerSeaBattleCells[i][j].setDisable(true);
+//                    }
+//                }
+//            }
+            System.out.println("Marked empty field (player)!");
+        }
+
+        // Computer's turn
+        // Generate random row and column
+        Random random = new Random();
+        int computerRowNumber = random.nextInt(9) + 1;
+        int computerColumnNumber = random.nextInt(9) + 1;
+        shipIsDamagedByComputer = checkIfComputerDamagedShip(computerRowNumber, computerColumnNumber);
+
+        if(shipIsDamagedByComputer)
+        {
+            // Mark damaged ship part
+            playerSeaBattleCells[computerRowNumber][computerColumnNumber].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+            // Disable button
+            playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
+            System.out.println("Player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
+//            for(int i = 0; i < playerSeaBattleCells.length; i++)
+//            {
+//                for(int j = 0; j < playerSeaBattleCells.length; j++)
+//                {
+//                    if(i == rowNumber - 1 && j == columnNumber - 1)
+//                    {
+//                        // Change button background color
+//                        playerSeaBattleCells[i][j].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
+//                        // Disable button
+//                        playerSeaBattleCells[i][j].setDisable(true);
+//                    }
+//                }
+//            }
+
+            updateShipInfo(false, computerRowNumber, computerColumnNumber);
+
+            // Update score info when ship is hit by computer
+            computerScore++;
+            computerScoreLabel.setText(computerScore + "");
+            System.out.println("Marked damaged ship part (computer)!");
+            // End game if all ships were destroyed
+            if(computerScore == 20)
+                endGame();
+        }
+        else
+        {
+            // Mark empty field
+            // Add 'X' to button
+            playerSeaBattleCells[computerRowNumber][computerColumnNumber].setText("X");
+            // Disable button
+            playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
+            System.out.println("Empty player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
+//            for(int i = 0; i < playerSeaBattleCells.length; i++)
+//            {
+//                for(int j = 0; j < playerSeaBattleCells.length; j++)
+//                {
+//                    if(i == rowNumber - 1 && j == columnNumber - 1)
+//                    {
+//
+//                        // Add 'X' to button
+//                        playerSeaBattleCells[i][j].setText("X");
+//                        // Disable button
+//                        playerSeaBattleCells[i][j].setDisable(true);
+//                    }
+//                }
+//            }
+            System.out.println("Marked empty field (computer)!");
+        }
+    }
+    // This method checks if player damaged ship
+    private boolean checkIfPlayerDamagedShip(int rowNumber, int columnNumber) //TODO ZLE WYKRYWA ZAJETE POLA
+    {
+        // Check if 4-fields ship has been damaged
+        for(Ship ship : computerShipWithFourFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                    return true;
+            }
+        }
+        // Check if 3-fields ship has been damaged
+        for(Ship ship : computerShipsWithThreeFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                    return true;
+            }
+        }
+        // Check if 2-fields ship has been damaged
+        for(Ship ship : computerShipsWithTwoFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                    return true;
+            }
+        }
+        // Check if 1-field ship has been damaged
+        for(Ship ship : computerShipsWithOneField)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+    // This method checks if computer damaged ship
+    private boolean checkIfComputerDamagedShip(int rowNumber, int columnNumber) //TODO ZLE WYKRYWA ZAJETE POLA
+    {
+        // Check if 4-fields ship has been damaged
+        for(Ship ship : playerShipWithFourFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                {
+                    System.out.println("4-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
+                    return true;
+                }
+            }
+        }
+        // Check if 3-fields ship has been damaged
+        for(Ship ship : playerShipsWithThreeFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                {
+                    System.out.println("3-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
+                    return true;
+                }
+            }
+        }
+        // Check if 2-fields ship has been damaged
+        for(Ship ship : playerShipsWithTwoFields)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                {
+                    System.out.println("2-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
+                    return true;
+                }
+            }
+        }
+        // Check if 1-field ship has been damaged
+        for(Ship ship : playerShipsWithOneField)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                {
+                    System.out.println("1-field ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    // This method updates labels that contain ship info
+    private void updateShipInfo(boolean updatePlayerShipInfo, int rowNumber, int columnNumber)
+    {
+        // Add all ships to list
+        List<Ship> allShips = new ArrayList<>();
+
+        if(updatePlayerShipInfo)
+        {
+            allShips.addAll(Arrays.asList(computerShipWithFourFields));
+            allShips.addAll(Arrays.asList(computerShipsWithThreeFields));
+            allShips.addAll(Arrays.asList(computerShipsWithTwoFields));
+            allShips.addAll(Arrays.asList(computerShipsWithOneField));
+        }
+        else
+        {
+            allShips.addAll(Arrays.asList(playerShipWithFourFields));
+            allShips.addAll(Arrays.asList(playerShipsWithThreeFields));
+            allShips.addAll(Arrays.asList(playerShipsWithTwoFields));
+            allShips.addAll(Arrays.asList(playerShipsWithOneField));
+        }
+
+        // Update proper ship info label
+        for(Ship ship : allShips)
+        {
+            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+            {
+                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
+                {
+                    // Get number of destroyed ship parts
+                    int numberOfDestroyedShipParts = 1;
+                    for(int i = ship.getShipLength(); i >= 0; i--)
+                    {
+                        System.out.println(ship.getShipInfo().getText().substring(i));
+                        if(ship.getShipInfo().getText().substring(i).contains("X"))
+                            numberOfDestroyedShipParts++;
+                    }
+                    System.out.println("Number of destroyed ship parts = " + numberOfDestroyedShipParts);
+                    // Prepare ship info
+                    StringBuilder shipInfo = new StringBuilder();
+                    for(int i = 0; i < ship.getShipLength(); i++)
+                    {
+                        // Add destroyed ship parts to ship info
+                        if(i < numberOfDestroyedShipParts)
+                            shipInfo.append("X");
+                        else
+                            shipInfo.append("-");
+                    }
+
+                    // Update label with generated ship info
+                    if(!updatePlayerShipInfo)
+                    {
+                        ship.getShipInfo().setText(shipInfo.toString());
+                    }
+                    else
+                    {
+                        // Update label
+                        ship.getShipInfo().setText(shipInfo.toString());
+                        // Show computer ship info when ship is destroyed
+                        if(numberOfDestroyedShipParts == ship.getShipLength())
+                            ship.getShipInfo().setVisible(true);
+                    }
+                }
+            }
+        }
     }
 }
