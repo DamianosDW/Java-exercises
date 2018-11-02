@@ -29,6 +29,8 @@ public class SeaBattleGame extends Application
         } catch (IOException e) {
             e.printStackTrace();
         }
+        // Lock app window size
+        primaryStage.setResizable(false);
         // Show app window
         primaryStage.show();
     }

@@ -380,14 +380,14 @@ public class SeaBattleController
         int endPosition = 0;
         int rowNumber = 0;
         Random random = new Random();
-        // Get random shipOrientation
-        orientation = (random.nextInt(2) == 1) ? "horizontal" : "vertical";
         // Create temp array with ship coordinates
         ShipCoordinates[] shipCoordinates = new ShipCoordinates[length];
 
         // Put ship into free fields
         do
         {
+            // Get random shipOrientation
+            orientation = (random.nextInt(2) == 1) ? "horizontal" : "vertical";
             // Set proper ship end position
             switch(orientation)
             {
@@ -425,26 +425,26 @@ public class SeaBattleController
                 case "vertical":
                     // Get random row number
                     do {
-                        rowNumber = random.nextInt(9);
-                    } while(rowNumber < length);
+                        columnNumber = random.nextInt(9);
+                    } while(columnNumber < length);
                     // Set proper start ship position (prevent from getting position > 10)
                     switch(length)
                     {
                         case 1:
                             // Set ship start position
-                            columnNumber = random.nextInt(9) + 1;
+                            rowNumber = random.nextInt(9) + 1;
                             break;
                         case 2:
                             // Set ship start position
-                            columnNumber = random.nextInt(7) + 1;
+                            rowNumber = random.nextInt(7) + 1;
                             break;
                         case 3:
                             // Set ship start position
-                            columnNumber = random.nextInt(6) + 1;
+                            rowNumber = random.nextInt(6) + 1;
                             break;
                         case 4:
                             // Set ship start position
-                            columnNumber = random.nextInt(5) + 1;
+                            rowNumber = random.nextInt(5) + 1;
                             break;
                     }
                     // Add first field to array
@@ -840,8 +840,9 @@ public class SeaBattleController
         // Show end game dialog
         showEndGameDialog(playerScore, computerScore);
     }
+
     // This method reveals selected field and updates score label
-    private void markSelectedField(int rowNumber, int columnNumber) //TODO NAPRAWIC OZNACZANIE POL
+    private void markSelectedField(int rowNumber, int columnNumber)
     {
         boolean shipIsDamagedByPlayer;
         boolean shipIsDamagedByComputer;
@@ -969,7 +970,7 @@ public class SeaBattleController
         }
     }
     // This method checks if player damaged ship
-    private boolean checkIfPlayerDamagedShip(int rowNumber, int columnNumber) //TODO ZLE WYKRYWA ZAJETE POLA
+    private boolean checkIfPlayerDamagedShip(int rowNumber, int columnNumber)
     {
         // Check if 4-fields ship has been damaged
         for(Ship ship : computerShipWithFourFields)
@@ -1011,7 +1012,7 @@ public class SeaBattleController
         return false;
     }
     // This method checks if computer damaged ship
-    private boolean checkIfComputerDamagedShip(int rowNumber, int columnNumber) //TODO ZLE WYKRYWA ZAJETE POLA
+    private boolean checkIfComputerDamagedShip(int rowNumber, int columnNumber)
     {
         // Check if 4-fields ship has been damaged
         for(Ship ship : playerShipWithFourFields)
@@ -1116,6 +1117,9 @@ public class SeaBattleController
                     if(!updatePlayerShipInfo)
                     {
                         ship.getShipInfo().setText(shipInfo.toString());
+                        // Disable fields next to destroyed ship
+                        if(numberOfDestroyedShipParts == ship.getShipLength())
+                            markFieldsNextToDestroyedShip(true, ship);
                     }
                     else
                     {
@@ -1123,10 +1127,149 @@ public class SeaBattleController
                         ship.getShipInfo().setText(shipInfo.toString());
                         // Show computer ship info when ship is destroyed
                         if(numberOfDestroyedShipParts == ship.getShipLength())
+                        {
                             ship.getShipInfo().setVisible(true);
+                            // Disable fields next to destroyed ship
+                            markFieldsNextToDestroyedShip(false, ship);
+                        }
                     }
                 }
             }
         }
+    }
+    // This method marks fields next to destroyed ship
+    private void markFieldsNextToDestroyedShip(boolean updatePlayerSeaBattleCells, Ship ship)
+    {
+        // Use proper array
+        SeaBattleCell[][] seaBattleCells;
+        if(updatePlayerSeaBattleCells)
+            seaBattleCells = playerSeaBattleCells;
+        else
+            seaBattleCells = computerSeaBattleCells;
+
+        for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
+        {
+            for(int i = 0; i < seaBattleCells.length; i++)
+            {
+                for(int j = 0; j < seaBattleCells.length; j++)
+                {
+                    switch(ship.getOrientation())
+                    {
+                        case "horizontal":
+                            // Mark proper fields as empty
+                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                            {
+
+                                // Fields above ship
+                                if((shipCoordinates.getRow() > 1 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
+                                {
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setDisable(true);
+                                }
+                                // Fields below ship
+                                if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 9) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
+                                {
+                                    seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn()].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn()].setDisable(true);
+                                }
+
+                                // Fields on the left side of ship
+                                if(shipCoordinates.getRow() > 1)
+                                {
+                                    int tempColumnNumber = (shipCoordinates.getColumn() - 1 > 0) ? shipCoordinates.getColumn() - 1 : 0;
+                                    int tempRowNumber = (shipCoordinates.getRow() + 1 < 10) ? shipCoordinates.getRow() + 1 : 9;
+
+                                    // Upper part
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    // Middle part
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    // Bottom part
+                                    seaBattleCells[tempRowNumber][tempColumnNumber].setText("X");
+                                    seaBattleCells[tempRowNumber][tempColumnNumber].setDisable(true);
+                                }
+                                // Fields on the right of ship
+                                if(shipCoordinates.getRow() < 9)
+                                {
+                                    int tempColumnNumber = (shipCoordinates.getColumn() + 1 < 10) ? shipCoordinates.getColumn() + 1 : 0;
+                                    int tempRowNumber = (shipCoordinates.getRow() - 1 > 0) ? shipCoordinates.getRow() - 1 : 0;
+
+                                    // Upper part
+                                    seaBattleCells[tempRowNumber][tempColumnNumber].setText("X");
+                                    seaBattleCells[tempRowNumber][tempColumnNumber].setDisable(true);
+                                    // Middle part
+                                    seaBattleCells[shipCoordinates.getRow()][tempColumnNumber].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow()][tempColumnNumber].setDisable(true);
+                                    // Bottom part
+                                    seaBattleCells[shipCoordinates.getRow() + 1][tempColumnNumber].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() + 1][tempColumnNumber].setDisable(true);
+                                }
+                            }
+                            break;
+                        case "vertical":
+                            // Mark proper fields as empty
+                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
+                            {
+                                // Fields above ship
+                                if(shipCoordinates.getRow() > 0)
+                                {
+                                    // Left side
+                                    if(shipCoordinates.getColumn() - 1 >= 0)
+                                    {
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    }
+
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setDisable(true);
+
+                                    // Right side
+                                    if(shipCoordinates.getColumn() + 1 < 10)
+                                    {
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() + 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() + 1].setDisable(true);
+                                    }
+                                }
+                                // Fields below ship
+                                if(shipCoordinates.getRow() < 9)
+                                {
+                                    // Left side
+                                    if(shipCoordinates.getColumn() - 1 >= 0)
+                                    {
+                                        seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn() - 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    }
+
+                                    seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn()].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn()].setDisable(true);
+
+                                    // Right side
+                                    if(shipCoordinates.getColumn() + 1 < 10)
+                                    {
+                                        seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn() + 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn() + 1].setDisable(true);
+                                    }
+                                }
+                                // Fields on the left side of ship
+                                if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 1 && shipCoordinates.getColumn() < 10))
+                                {
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
+                                }
+                                // Fields on the right side of ship
+                                if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 9))
+                                {
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() + 1].setText("X");
+                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() + 1].setDisable(true);
+                                }
+                            }
+                            break;
+                    }
+
+                }
+            }
+        }
+
     }
 }
