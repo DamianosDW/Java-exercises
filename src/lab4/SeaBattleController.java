@@ -2,9 +2,7 @@ package lab4;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -681,22 +679,6 @@ public class SeaBattleController
             System.out.println("Ship orientation: vertical!");
             shipOrientation = "vertical";
         }
-//        if(!rotatedShip)
-//        {
-//            // Change ship preview
-//            setShipPreviewWorkingArea("horizontal");
-//            System.out.println("Ship shipOrientation: horizontal!");
-//
-//            rotatedShip = true;
-//        }
-//        else
-//        {
-//            // Change ship preview
-//            setShipPreviewWorkingArea("vertical");
-//            System.out.println("Ship shipOrientation: vertical!");
-//            // Set default value
-//            rotatedShip = false;
-//        }
 
     }
     // This method changes ship preview
@@ -794,7 +776,7 @@ public class SeaBattleController
     }
     private void showEndGameDialog(int playerScore, int computerScore)
     {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Game over");
 
         if(playerScore > computerScore)
@@ -802,8 +784,25 @@ public class SeaBattleController
         else
             alert.setHeaderText("Game over! You lost! Take a look at the game statistics.");
 
-        alert.setContentText("You destroyed " + playerScore + " ship parts!\nComputer destroyed " + computerScore + " ship parts!");
-        alert.showAndWait();
+        alert.setContentText("You destroyed " + playerScore + " ship parts!\nComputer destroyed " + computerScore + " ship parts!\n\nDo you want to play again?");
+        alert.showAndWait().ifPresent(result -> {
+            // Restart game
+            if(result == ButtonType.OK)
+            {
+                // Set default variables values
+                playerShipLength = 4;
+                playerShipNumber = 0;
+                shipOrientation = "vertical";
+                this.playerScore = 0;
+                this.computerScore = 0;
+                // Clear lists
+                playerFieldsOccupied.clear();
+                computerFieldsOccupied.clear();
+
+                // Reload app window
+                SeaBattleGame.loadAppWindow();
+            }
+        });
     }
     // This method configures buttons and labels to start sea battle game
     private void startGame()
@@ -857,19 +856,6 @@ public class SeaBattleController
             // Disable button
             computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
             System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
-//            for(int i = 0; i < computerSeaBattleCells.length; i++)
-//            {
-//                for(int j = 0; j < computerSeaBattleCells.length; j++)
-//                {
-//                    if(i == rowNumber && j == columnNumber)
-//                    {
-//                        // Change button background color
-//                        computerSeaBattleCells[i][j].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-//                        // Disable button
-//                        computerSeaBattleCells[i][j].setDisable(true);
-//                    }
-//                }
-//            }
 
             updateShipInfo(true, rowNumber, columnNumber);
 
@@ -889,20 +875,6 @@ public class SeaBattleController
             // Disable button
             computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
             System.out.println("Empty computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
-//            for(int i = 0; i < computerSeaBattleCells.length; i++)
-//            {
-//                for(int j = 0; j < computerSeaBattleCells.length; j++)
-//                {
-//                    if(i == rowNumber && j == columnNumber)
-//                    {
-//
-//                        // Add 'X' to button
-//                        computerSeaBattleCells[i][j].setText("X");
-//                        // Disable button
-//                        computerSeaBattleCells[i][j].setDisable(true);
-//                    }
-//                }
-//            }
             System.out.println("Marked empty field (player)!");
         }
 
@@ -911,6 +883,26 @@ public class SeaBattleController
         Random random = new Random();
         int computerRowNumber = random.nextInt(9) + 1;
         int computerColumnNumber = random.nextInt(9) + 1;
+
+        if(!playerGridPane.isDisabled())
+        {
+            if(playerSeaBattleCells[computerRowNumber][computerColumnNumber].isDisabled())
+            {
+                // Get first enabled SeaBattle cell coordinates
+                for(int i = 0; i < playerSeaBattleCells.length; i++)
+                {
+                    for(int j = 0; j < playerSeaBattleCells.length; j++)
+                    {
+                        if(!playerSeaBattleCells[i][j].isDisabled())
+                        {
+                            computerRowNumber = i;
+                            computerColumnNumber = j;
+                        }
+                    }
+                }
+            }
+        }
+
         shipIsDamagedByComputer = checkIfComputerDamagedShip(computerRowNumber, computerColumnNumber);
 
         if(shipIsDamagedByComputer)
@@ -920,19 +912,6 @@ public class SeaBattleController
             // Disable button
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
             System.out.println("Player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
-//            for(int i = 0; i < playerSeaBattleCells.length; i++)
-//            {
-//                for(int j = 0; j < playerSeaBattleCells.length; j++)
-//                {
-//                    if(i == rowNumber - 1 && j == columnNumber - 1)
-//                    {
-//                        // Change button background color
-//                        playerSeaBattleCells[i][j].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-//                        // Disable button
-//                        playerSeaBattleCells[i][j].setDisable(true);
-//                    }
-//                }
-//            }
 
             updateShipInfo(false, computerRowNumber, computerColumnNumber);
 
@@ -952,20 +931,6 @@ public class SeaBattleController
             // Disable button
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
             System.out.println("Empty player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
-//            for(int i = 0; i < playerSeaBattleCells.length; i++)
-//            {
-//                for(int j = 0; j < playerSeaBattleCells.length; j++)
-//                {
-//                    if(i == rowNumber - 1 && j == columnNumber - 1)
-//                    {
-//
-//                        // Add 'X' to button
-//                        playerSeaBattleCells[i][j].setText("X");
-//                        // Disable button
-//                        playerSeaBattleCells[i][j].setDisable(true);
-//                    }
-//                }
-//            }
             System.out.println("Marked empty field (computer)!");
         }
     }
@@ -1062,7 +1027,6 @@ public class SeaBattleController
                 }
             }
         }
-
         return false;
     }
     // This method updates labels that contain ship info
@@ -1161,7 +1125,7 @@ public class SeaBattleController
                             {
 
                                 // Fields above ship
-                                if((shipCoordinates.getRow() > 1 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
+                                if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
                                 {
                                     seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setText("X");
                                     seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setDisable(true);
@@ -1174,17 +1138,32 @@ public class SeaBattleController
                                 }
 
                                 // Fields on the left side of ship
-                                if(shipCoordinates.getRow() > 1)
+                                if(shipCoordinates.getRow() > 0)
                                 {
                                     int tempColumnNumber = (shipCoordinates.getColumn() - 1 > 0) ? shipCoordinates.getColumn() - 1 : 0;
                                     int tempRowNumber = (shipCoordinates.getRow() + 1 < 10) ? shipCoordinates.getRow() + 1 : 9;
 
-                                    // Upper part
-                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setText("X");
-                                    seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setDisable(true);
-                                    // Middle part
-                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
-                                    seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    if(shipCoordinates.getColumn() - 1 >= 0)
+                                    {
+                                        // Upper part
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setDisable(true);
+
+                                        // Middle part
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
+                                    }
+                                    if(shipCoordinates.getColumn() + 1 < 10)
+                                    {
+                                        // Upper part
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() + 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() + 1].setDisable(true);
+
+                                        // Middle part
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() + 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() + 1].setDisable(true);
+                                    }
+
                                     // Bottom part
                                     seaBattleCells[tempRowNumber][tempColumnNumber].setText("X");
                                     seaBattleCells[tempRowNumber][tempColumnNumber].setDisable(true);
@@ -1192,7 +1171,7 @@ public class SeaBattleController
                                 // Fields on the right of ship
                                 if(shipCoordinates.getRow() < 9)
                                 {
-                                    int tempColumnNumber = (shipCoordinates.getColumn() + 1 < 10) ? shipCoordinates.getColumn() + 1 : 0;
+                                    int tempColumnNumber = (shipCoordinates.getColumn() + 1 < 10) ? shipCoordinates.getColumn() + 1 : shipCoordinates.getColumn();
                                     int tempRowNumber = (shipCoordinates.getRow() - 1 > 0) ? shipCoordinates.getRow() - 1 : 0;
 
                                     // Upper part
@@ -1219,6 +1198,9 @@ public class SeaBattleController
                                     {
                                         seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setText("X");
                                         seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() - 1].setDisable(true);
+
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
+                                        seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
                                     }
 
                                     seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setText("X");
@@ -1266,10 +1248,8 @@ public class SeaBattleController
                             }
                             break;
                     }
-
                 }
             }
         }
-
     }
 }
