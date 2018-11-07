@@ -29,10 +29,6 @@ public class SeaBattleGame extends Application
         // Show app window
         primaryStage.show();
     }
-    // Getter
-    public static Stage getStage() {
-        return stage;
-    }
     // Load app window
     public static void loadAppWindow()
     {

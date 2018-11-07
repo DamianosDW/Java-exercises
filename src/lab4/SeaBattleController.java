@@ -3,16 +3,16 @@ package lab4;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
 
 import java.util.*;
+import java.util.List;
 
 public class SeaBattleController
 {
     // Injected FXML objects
-    @FXML
-    private BorderPane mainBorderPane;
     @FXML
     private GridPane playerGridPane;
     @FXML
@@ -31,16 +31,10 @@ public class SeaBattleController
     private VBox computerShips;
 
     // Player ships
-    private static Ship[] playerShipWithFourFields = new Ship[1];
-    private static Ship[] playerShipsWithThreeFields = new Ship[2];
-    private static Ship[] playerShipsWithTwoFields = new Ship[3];
-    private static Ship[] playerShipsWithOneField = new Ship[4];
+    private static List<Ship> allPlayerShips = new ArrayList<>();
 
     // Computer ships
-    private static Ship[] computerShipWithFourFields = new Ship[1];
-    private static Ship[] computerShipsWithThreeFields = new Ship[2];
-    private static Ship[] computerShipsWithTwoFields = new Ship[3];
-    private static Ship[] computerShipsWithOneField = new Ship[4];
+    private static List<Ship> allComputerShips = new ArrayList<>();
 
     // SeaBattleCells
     private static SeaBattleCell[][] playerSeaBattleCells = new SeaBattleCell[10][10];
@@ -51,9 +45,10 @@ public class SeaBattleController
     // Fields occupied by computer ships
     private static List<FieldsOccupied> computerFieldsOccupied = new ArrayList<>();
 
-    // Selected ship length, ship number and shipOrientation
+    // Selected ship length, ship number, ship counter and shipOrientation
     private static int playerShipLength = 4;
     private static int playerShipNumber = 0;
+    private static int playerShipCounter = 0;
     private static String shipOrientation = "vertical";
 
     // Scores
@@ -72,6 +67,10 @@ public class SeaBattleController
         // Prepare game areas
         preparePlayerGridPane();
         prepareComputerGridPane();
+
+        // Initialize player ships list
+        for(int i = 0; i < 10; i++)
+            allPlayerShips.add(null);
     }
 
     // Getters and setters
@@ -80,24 +79,6 @@ public class SeaBattleController
     }
     public VBox getComputerShips() {
         return computerShips;
-    }
-    public static int getPlayerShipLength() {
-        return playerShipLength;
-    }
-    public static void setPlayerShipLength(int playerShipLength) {
-        SeaBattleController.playerShipLength = playerShipLength;
-    }
-    public static int getPlayerShipNumber() {
-        return playerShipNumber;
-    }
-    public static void setPlayerShipNumber(int playerShipNumber) {
-        SeaBattleController.playerShipNumber = playerShipNumber;
-    }
-    public static String getShipOrientation() {
-        return shipOrientation;
-    }
-    public static void setShipOrientation(String shipOrientation) {
-        SeaBattleController.shipOrientation = shipOrientation;
     }
 
     // Prepare game area for player
@@ -131,18 +112,16 @@ public class SeaBattleController
                 shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
                 // Add another fields to array
                 for(int i = 1; i < playerShipLength; i++)
-                {
                     shipCoordinates[i] = new ShipCoordinates(rowNumber, ++columnNumber);
-                }
+
                 break;
             case "vertical":
                 // Add first field to array
                 shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
                 // Add another fields to array
                 for(int i = 1; i < playerShipLength; i++)
-                {
                     shipCoordinates[i] = new ShipCoordinates(++rowNumber, columnNumber);
-                }
+
                 break;
         }
 
@@ -155,7 +134,7 @@ public class SeaBattleController
         }
         else
         {
-            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ". Orientation: " + shipOrientation);
+//            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ". Orientation: " + shipOrientation);
 
             // Insert information about occupied fields to list
             if(shipOrientation.equals("vertical"))
@@ -163,18 +142,18 @@ public class SeaBattleController
                 for(ShipCoordinates ship : shipCoordinates)
                 {
                     // Add fields occupied by ship to list
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn()));
                     // Add fields next to the ship to list
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn()));
 
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() + 1));
 
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() + 1));
                 }
             }
             else
@@ -182,18 +161,18 @@ public class SeaBattleController
                 for(ShipCoordinates ship : shipCoordinates)
                 {
                     // Add fields occupied by ship to list
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn()));
                     // Add fields next to the ship to list
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn()));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn()));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow(), ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn()));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() + 1));
 
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() - 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() - 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() - 1));
 
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() - 1, ship.getColumn() + 1));
-                    playerFieldsOccupied.add(new FieldsOccupied(shipOrientation, ship.getRow() + 1, ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() + 1));
+                    playerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() + 1));
                 }
             }
 
@@ -214,19 +193,20 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipWithFourFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    allPlayerShips.set(playerShipNumber, createPlayerShip(rowNumber, columnNumber));
 
-                    if(playerShipWithFourFields[playerShipNumber] != null)
+                    if(allPlayerShips.get(playerShipNumber) != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
+                        changePlayerSeaBattleCellBackgroundColor(playerShipNumber);
 
                         // Set proper values
                         playerShipNumber++;
-                        if(playerShipNumber == 1)
+                        playerShipCounter++;
+                        if(playerShipCounter == 1)
                         {
                             playerShipLength = 3;
-                            playerShipNumber = 0;
+                            playerShipCounter = 0;
                         }
                         // Set default ship orientation
                         shipOrientation = "vertical";
@@ -241,19 +221,20 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipsWithThreeFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    allPlayerShips.set(playerShipNumber, createPlayerShip(rowNumber, columnNumber));
 
-                    if(playerShipsWithThreeFields[playerShipNumber] != null)
+                    if(allPlayerShips.get(playerShipNumber) != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
+                        changePlayerSeaBattleCellBackgroundColor(playerShipNumber);
 
                         // Set proper values
                         playerShipNumber++;
-                        if(playerShipNumber == 2)
+                        playerShipCounter++;
+                        if(playerShipCounter == 2)
                         {
                             playerShipLength = 2;
-                            playerShipNumber = 0;
+                            playerShipCounter = 0;
                         }
                         // Set default ship orientation
                         shipOrientation = "vertical";
@@ -268,19 +249,20 @@ public class SeaBattleController
                 }
                 else
                 {
-                    playerShipsWithTwoFields[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    allPlayerShips.set(playerShipNumber, createPlayerShip(rowNumber, columnNumber));
 
-                    if(playerShipsWithTwoFields[playerShipNumber] != null)
+                    if(allPlayerShips.get(playerShipNumber) != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
+                        changePlayerSeaBattleCellBackgroundColor(playerShipNumber);
 
                         // Set proper values
                         playerShipNumber++;
-                        if(playerShipNumber == 3)
+                        playerShipCounter++;
+                        if(playerShipCounter == 3)
                         {
                             playerShipLength = 1;
-                            playerShipNumber = 0;
+                            playerShipCounter = 0;
                         }
                         // Set default ship orientation
                         shipOrientation = "vertical";
@@ -295,20 +277,20 @@ public class SeaBattleController
                 }
                 else
                 {
-                    // Create 1-field ship
-                    playerShipsWithOneField[playerShipNumber] = createPlayerShip(rowNumber, columnNumber);
+                    allPlayerShips.set(playerShipNumber, createPlayerShip(rowNumber, columnNumber));
 
-                    if(playerShipsWithOneField[playerShipNumber] != null)
+                    if(allPlayerShips.get(playerShipNumber) != null)
                     {
                         // Place player ship (change proper buttons background and check if ship can be placed there)
-                        changeSeaBattleCellBackgroundColor(playerShipLength, playerShipNumber, false);
+                        changePlayerSeaBattleCellBackgroundColor(playerShipNumber);
 
                         // Set proper values
                         playerShipNumber++;
-                        if(playerShipNumber == 4)
+                        playerShipCounter++;
+                        if(playerShipCounter == 4)
                         {
                             playerShipLength = 0;
-                            playerShipNumber = 0;
+                            playerShipCounter = 0;
                         }
                         // Set default ship orientation
                         shipOrientation = "vertical";
@@ -336,46 +318,34 @@ public class SeaBattleController
                 computerGridPane.add(seaBattleCell, column, row);
             }
         }
-        // Prepare computer ships
+
         prepareComputerShips();
     }
-    // Prepare computer ships
+
     private void prepareComputerShips()
     {
         // Create 4-fields ship
-        computerShipWithFourFields[0] = createComputerShip(4);
-        System.out.println("Umieszczono statek złożony z 4 pól!");
+        allComputerShips.add(createComputerShip(4));
+
         // Create 3-fields ships
-        computerShipsWithThreeFields[0] = createComputerShip(3);
-        System.out.println("Umieszczono statek złożony z 3 pól!");
-        computerShipsWithThreeFields[1] = createComputerShip(3);
-        System.out.println("Umieszczono statek złożony z 3 pól!");
+        allComputerShips.add(createComputerShip(3));
+        allComputerShips.add(createComputerShip(3));
+
         // Create 2-fields ships
-        computerShipsWithTwoFields[0] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[1] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
-        computerShipsWithTwoFields[2] = createComputerShip(2);
-        System.out.println("Umieszczono statek złożony z 2 pól!");
+        allComputerShips.add(createComputerShip(2));
+        allComputerShips.add(createComputerShip(2));
+        allComputerShips.add(createComputerShip(2));
+
         // Create 1-field ships
-        computerShipsWithOneField[0] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[1] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[2] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-        computerShipsWithOneField[3] = createComputerShip(1);
-        System.out.println("Umieszczono statek złożony z 1 pola!");
-
-        placeComputerShips();
-
+        allComputerShips.add(createComputerShip(1));
+        allComputerShips.add(createComputerShip(1));
+        allComputerShips.add(createComputerShip(1));
+        allComputerShips.add(createComputerShip(1));
     }
-    // This method creates ship for computer with defined length
     private Ship createComputerShip(int length)
     {
         String orientation;
         int columnNumber = 0;
-        int endPosition = 0;
         int rowNumber = 0;
         Random random = new Random();
         // Create temp array with ship coordinates
@@ -416,9 +386,8 @@ public class SeaBattleController
                     shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
                     // Add another fields to array
                     for(int i = 1; i < length; i++)
-                    {
                         shipCoordinates[i] = new ShipCoordinates(rowNumber, ++columnNumber);
-                    }
+
                     break;
                 case "vertical":
                     // Get random row number
@@ -449,12 +418,11 @@ public class SeaBattleController
                     shipCoordinates[0] = new ShipCoordinates(rowNumber, columnNumber);
                     // Add another fields to array
                     for(int i = 1; i < length; i++)
-                    {
                         shipCoordinates[i] = new ShipCoordinates(++rowNumber, columnNumber);
-                    }
+
                     break;
             }
-            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ", endPosition = " + endPosition + ". Orientation: " + orientation);
+//            System.out.println("Generated coordinates - rowNumber = " + rowNumber + ", column = " + columnNumber + ", endPosition = " + endPosition + ". Orientation: " + orientation);
         } while(!checkIfShipPositionIsCorrect(shipCoordinates, true));
 
         // Insert information about occupied fields to list
@@ -463,18 +431,18 @@ public class SeaBattleController
             for(ShipCoordinates ship : shipCoordinates)
             {
                 // Add fields occupied by ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn()));
                 // Add fields next to the ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn()));
 
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() + 1));
 
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() + 1));
             }
         }
         else
@@ -482,73 +450,24 @@ public class SeaBattleController
             for(ShipCoordinates ship : shipCoordinates)
             {
                 // Add fields occupied by ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn()));
                 // Add fields next to the ship to list
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn()));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow(), ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn()));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow(), ship.getColumn() + 1));
 
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() - 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() - 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() - 1));
 
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() - 1, ship.getColumn() + 1));
-                computerFieldsOccupied.add(new FieldsOccupied(orientation, ship.getRow() + 1, ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() - 1, ship.getColumn() + 1));
+                computerFieldsOccupied.add(new FieldsOccupied(ship.getRow() + 1, ship.getColumn() + 1));
             }
         }
         // Create ship object
         return new Ship(length, orientation, shipCoordinates, true);
     }
-    // This method places computer ships into GridPane container fields
-    private void placeComputerShips()
-    {
 
-        System.out.println("-------------------------------------------------------------");
-        // Set proper number of ships
-        int numberOfShips = 1;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        changeSeaBattleCellBackgroundColor(4, numberOfShips - 1, true);
-
-        for(Ship ship : computerShipWithFourFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(3, shipNumber, true);
-
-        for(Ship ship : computerShipsWithThreeFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(2, shipNumber, true);
-
-        for(Ship ship : computerShipsWithTwoFields)
-        {
-            System.out.println(ship);
-        }
-        System.out.println("-------------------------------------------------------------");
-        // Increase number of ships
-        numberOfShips++;
-        // Place computer ship (change proper buttons background and check if ship can be placed there)
-        for(int shipNumber = 0; shipNumber < numberOfShips; shipNumber++)
-            changeSeaBattleCellBackgroundColor(1, shipNumber, true);
-
-        for(Ship ship : computerShipsWithOneField)
-        {
-            System.out.println(ship);
-        }
-    }
-
-    // This method checks if ship position is correct
     private boolean checkIfShipPositionIsCorrect(ShipCoordinates[] shipCoordinates, boolean checkComputerShips)
     {
         if(checkComputerShips)
@@ -585,98 +504,39 @@ public class SeaBattleController
         }
     }
     // This method changes buttons background color
-    private void changeSeaBattleCellBackgroundColor(int shipLength, int shipNumber, boolean changeComputerSeaBattleCells)
+    private void changePlayerSeaBattleCellBackgroundColor(int shipNumber)
     {
-        // Temporary array
-        ShipCoordinates[] tempShipCoordinates = null;
-
-        // Use proper array
-        switch(shipLength)
+        if(allPlayerShips != null)
         {
-            case 1:
-                if(changeComputerSeaBattleCells)
-                    tempShipCoordinates = computerShipsWithOneField[shipNumber].getShipCoordinates();
-                else
-                    tempShipCoordinates = playerShipsWithOneField[shipNumber].getShipCoordinates();
-                break;
-            case 2:
-                if(changeComputerSeaBattleCells)
-                    tempShipCoordinates = computerShipsWithTwoFields[shipNumber].getShipCoordinates();
-                else
-                    tempShipCoordinates = playerShipsWithTwoFields[shipNumber].getShipCoordinates();
-                break;
-            case 3:
-                if(changeComputerSeaBattleCells)
-                    tempShipCoordinates = computerShipsWithThreeFields[shipNumber].getShipCoordinates();
-                else
-                    tempShipCoordinates = playerShipsWithThreeFields[shipNumber].getShipCoordinates();
-                break;
-            case 4:
-                if(changeComputerSeaBattleCells)
-                    tempShipCoordinates = computerShipWithFourFields[shipNumber].getShipCoordinates();
-                else
-                    tempShipCoordinates = playerShipWithFourFields[shipNumber].getShipCoordinates();
-                break;
-        }
-
-        if(changeComputerSeaBattleCells)
-        {
-            // Search for proper buttons and change their background color
-//            if(tempShipCoordinates != null)
-//            {
-//                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
-//                {
-//                    for(int i = 0; i < computerSeaBattleCells.length; i++)
-//                    {
-//                        for(int j = 0; j < computerSeaBattleCells.length; j++)
-//                        {
-//                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
-//                            {
-//                                // Change button background color
-//                                computerSeaBattleCells[i][j].setStyle("-fx-background-color: green; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-        }
-        else
-        {
-            // Search for proper buttons and change their background color
-            if(tempShipCoordinates != null)
+            for(ShipCoordinates shipCoordinates : allPlayerShips.get(shipNumber).getShipCoordinates())
             {
-                for(ShipCoordinates shipCoordinates : tempShipCoordinates)
+                for(int i = 0; i < playerSeaBattleCells.length; i++)
                 {
-                    for(int i = 0; i < playerSeaBattleCells.length; i++)
+                    for(int j = 0; j < playerSeaBattleCells.length; j++)
                     {
-                        for(int j = 0; j < playerSeaBattleCells.length; j++)
+                        if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
                         {
-                            if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
-                            {
-                                // Change button background color
-                                playerSeaBattleCells[i][j].setStyle("-fx-background-color: blue; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
-                            }
+                            // Change button background color
+                            playerSeaBattleCells[i][j].setStyle("-fx-background-color: blue; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: silver; -fx-pref-width: 42px; -fx-pref-height: 40px;");
                         }
                     }
                 }
             }
         }
     }
-    // This method rotates player ship
+
     public void rotateShip()
     {
         if(shipOrientation.equals("vertical"))
         {
             // Change ship preview
             setShipPreviewWorkingArea("horizontal");
-            System.out.println("Ship orientation: horizontal!");
             shipOrientation = "horizontal";
         }
         else
         {
             // Change ship preview
             setShipPreviewWorkingArea("vertical");
-            System.out.println("Ship orientation: vertical!");
             shipOrientation = "vertical";
         }
 
@@ -692,7 +552,6 @@ public class SeaBattleController
             playerShipLength = -1;
         }
 
-
         // Clear ship preview container
         shipPreviewWorkingArea.getChildren().clear();
 
@@ -700,7 +559,6 @@ public class SeaBattleController
         switch(orientation)
         {
             case "vertical":
-                // Create working area
                 VBox vBox = new VBox();
                 vBox.setAlignment(Pos.CENTER);
                 // Prepare ship view (use ship length to show ship which can be placed in game area)
@@ -726,7 +584,6 @@ public class SeaBattleController
                 shipPreviewWorkingArea.getChildren().add(vBox);
                 break;
             case "horizontal":
-                // Create working area
                 HBox hBox = new HBox();
                 hBox.setAlignment(Pos.CENTER);
                 // Prepare ship view (use ship length to show ship which can be placed in game area)
@@ -757,14 +614,13 @@ public class SeaBattleController
     // Alerts
     private void showStartGameDialogAndHideShipPreview()
     {
-        // Show information about game start
         Alert info = new Alert(Alert.AlertType.INFORMATION);
         info.setTitle("Information");
         info.setHeaderText("You've placed all ships on the game area! Now you can start shooting computer ships. Good luck!");
         info.showAndWait();
         // Hide ship preview container
         shipPreviewMainContainer.setVisible(false);
-        // Start game
+
         startGame();
     }
     private void showErrorDialog(String message)
@@ -792,19 +648,22 @@ public class SeaBattleController
                 // Set default variables values
                 playerShipLength = 4;
                 playerShipNumber = 0;
+                playerShipCounter = 0;
                 shipOrientation = "vertical";
                 this.playerScore = 0;
                 this.computerScore = 0;
                 // Clear lists
                 playerFieldsOccupied.clear();
                 computerFieldsOccupied.clear();
+                allPlayerShips.clear();
+                allComputerShips.clear();
 
                 // Reload app window
                 SeaBattleGame.loadAppWindow();
             }
         });
     }
-    // This method configures buttons and labels to start sea battle game
+    // This method configures buttons and labels and starts sea battle game
     private void startGame()
     {
         // Change all buttons action
@@ -818,12 +677,7 @@ public class SeaBattleController
                 computerSeaBattleCell.setOnMouseDragged(event -> {});
                 playerSeaBattleCell.setOnMouseDragged(event -> {});
                 // Set new action
-                computerSeaBattleCell.setOnAction(event ->
-                {
-                    System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + computerSeaBattleCell.getRowNumber() + ", columnNumber = " + computerSeaBattleCell.getColumnNumber());
-
-                    markSelectedField(computerSeaBattleCell.getRowNumber(), computerSeaBattleCell.getColumnNumber());
-                });
+                computerSeaBattleCell.setOnAction(event -> markSelectedField(computerSeaBattleCell.getRowNumber(), computerSeaBattleCell.getColumnNumber()));
             }
         }
         // Set default score
@@ -836,7 +690,7 @@ public class SeaBattleController
         // Disable containers
         playerGridPane.setDisable(true);
         computerGridPane.setDisable(true);
-        // Show end game dialog
+
         showEndGameDialog(playerScore, computerScore);
     }
 
@@ -847,7 +701,7 @@ public class SeaBattleController
         boolean shipIsDamagedByComputer;
 
         // Player's turn
-        shipIsDamagedByPlayer = checkIfPlayerDamagedShip(rowNumber, columnNumber);
+        shipIsDamagedByPlayer = checkIfShipHasBeenDamaged(rowNumber, columnNumber, true);
 
         if(shipIsDamagedByPlayer)
         {
@@ -855,27 +709,28 @@ public class SeaBattleController
             computerSeaBattleCells[rowNumber][columnNumber].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
             // Disable button
             computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
-            System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
+//            System.out.println("Computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
 
             updateShipInfo(true, rowNumber, columnNumber);
 
             // Update score info when ship is hit by player
             playerScore++;
             playerScoreLabel.setText(playerScore + "");
-            System.out.println("Marked damaged ship part (player)!");
+//            System.out.println("Marked damaged ship part (player)!");
             // End game if all ships were destroyed
             if(playerScore == 20)
+            {
                 endGame();
+                return;
+            }
         }
         else
         {
             // Mark empty field
-            // Add 'X' to button
             computerSeaBattleCells[rowNumber][columnNumber].setText("X");
-            // Disable button
             computerSeaBattleCells[rowNumber][columnNumber].setDisable(true);
-            System.out.println("Empty computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
-            System.out.println("Marked empty field (player)!");
+//            System.out.println("Empty computer SeaBattle cell coordinates: rowNumber = " + rowNumber + ", columnNumber = " + columnNumber);
+//            System.out.println("Marked empty field (player)!");
         }
 
         // Computer's turn
@@ -903,7 +758,7 @@ public class SeaBattleController
             }
         }
 
-        shipIsDamagedByComputer = checkIfComputerDamagedShip(computerRowNumber, computerColumnNumber);
+        shipIsDamagedByComputer = checkIfShipHasBeenDamaged(computerRowNumber, computerColumnNumber, false);
 
         if(shipIsDamagedByComputer)
         {
@@ -911,14 +766,14 @@ public class SeaBattleController
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setStyle("-fx-background-color: red; -fx-background-radius: 0; -fx-border-width: 1; -fx-border-color: black; -fx-pref-width: 42px; -fx-pref-height: 40px;");
             // Disable button
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
-            System.out.println("Player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
+//            System.out.println("Player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
 
             updateShipInfo(false, computerRowNumber, computerColumnNumber);
 
             // Update score info when ship is hit by computer
             computerScore++;
             computerScoreLabel.setText(computerScore + "");
-            System.out.println("Marked damaged ship part (computer)!");
+//            System.out.println("Marked damaged ship part (computer)!");
             // End game if all ships were destroyed
             if(computerScore == 20)
                 endGame();
@@ -926,46 +781,22 @@ public class SeaBattleController
         else
         {
             // Mark empty field
-            // Add 'X' to button
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setText("X");
-            // Disable button
             playerSeaBattleCells[computerRowNumber][computerColumnNumber].setDisable(true);
-            System.out.println("Empty player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
-            System.out.println("Marked empty field (computer)!");
+//            System.out.println("Empty player SeaBattle cell coordinates: rowNumber = " + computerRowNumber + ", columnNumber = " + computerColumnNumber);
+//            System.out.println("Marked empty field (computer)!");
         }
     }
-    // This method checks if player damaged ship
-    private boolean checkIfPlayerDamagedShip(int rowNumber, int columnNumber)
+
+    private boolean checkIfShipHasBeenDamaged(int rowNumber, int columnNumber, boolean isPlayerTurn)
     {
-        // Check if 4-fields ship has been damaged
-        for(Ship ship : computerShipWithFourFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                    return true;
-            }
-        }
-        // Check if 3-fields ship has been damaged
-        for(Ship ship : computerShipsWithThreeFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                    return true;
-            }
-        }
-        // Check if 2-fields ship has been damaged
-        for(Ship ship : computerShipsWithTwoFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                    return true;
-            }
-        }
-        // Check if 1-field ship has been damaged
-        for(Ship ship : computerShipsWithOneField)
+        List<Ship> allShips;
+        if(isPlayerTurn)
+            allShips = allComputerShips;
+        else
+            allShips = allPlayerShips;
+
+        for(Ship ship : allShips)
         {
             for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
             {
@@ -976,79 +807,14 @@ public class SeaBattleController
 
         return false;
     }
-    // This method checks if computer damaged ship
-    private boolean checkIfComputerDamagedShip(int rowNumber, int columnNumber)
-    {
-        // Check if 4-fields ship has been damaged
-        for(Ship ship : playerShipWithFourFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                {
-                    System.out.println("4-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
-                    return true;
-                }
-            }
-        }
-        // Check if 3-fields ship has been damaged
-        for(Ship ship : playerShipsWithThreeFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                {
-                    System.out.println("3-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
-                    return true;
-                }
-            }
-        }
-        // Check if 2-fields ship has been damaged
-        for(Ship ship : playerShipsWithTwoFields)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                {
-                    System.out.println("2-fields ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
-                    return true;
-                }
-            }
-        }
-        // Check if 1-field ship has been damaged
-        for(Ship ship : playerShipsWithOneField)
-        {
-            for(ShipCoordinates shipCoordinates : ship.getShipCoordinates())
-            {
-                if(shipCoordinates.getRow() == rowNumber && shipCoordinates.getColumn() == columnNumber)
-                {
-                    System.out.println("1-field ship coordinates: rowNumber = " + shipCoordinates.getRow() + ", columnNumber = " + shipCoordinates.getColumn());
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    // This method updates labels that contain ship info
     private void updateShipInfo(boolean updatePlayerShipInfo, int rowNumber, int columnNumber)
     {
-        // Add all ships to list
-        List<Ship> allShips = new ArrayList<>();
-
+        List<Ship> allShips;
+        // Use proper list
         if(updatePlayerShipInfo)
-        {
-            allShips.addAll(Arrays.asList(computerShipWithFourFields));
-            allShips.addAll(Arrays.asList(computerShipsWithThreeFields));
-            allShips.addAll(Arrays.asList(computerShipsWithTwoFields));
-            allShips.addAll(Arrays.asList(computerShipsWithOneField));
-        }
+            allShips = allComputerShips;
         else
-        {
-            allShips.addAll(Arrays.asList(playerShipWithFourFields));
-            allShips.addAll(Arrays.asList(playerShipsWithThreeFields));
-            allShips.addAll(Arrays.asList(playerShipsWithTwoFields));
-            allShips.addAll(Arrays.asList(playerShipsWithOneField));
-        }
+            allShips = allPlayerShips;
 
         // Update proper ship info label
         for(Ship ship : allShips)
@@ -1061,11 +827,10 @@ public class SeaBattleController
                     int numberOfDestroyedShipParts = 1;
                     for(int i = ship.getShipLength(); i >= 0; i--)
                     {
-                        System.out.println(ship.getShipInfo().getText().substring(i));
                         if(ship.getShipInfo().getText().substring(i).contains("X"))
                             numberOfDestroyedShipParts++;
                     }
-                    System.out.println("Number of destroyed ship parts = " + numberOfDestroyedShipParts);
+
                     // Prepare ship info
                     StringBuilder shipInfo = new StringBuilder();
                     for(int i = 0; i < ship.getShipLength(); i++)
@@ -1093,7 +858,6 @@ public class SeaBattleController
                         if(numberOfDestroyedShipParts == ship.getShipLength())
                         {
                             ship.getShipInfo().setVisible(true);
-                            // Disable fields next to destroyed ship
                             markFieldsNextToDestroyedShip(false, ship);
                         }
                     }
@@ -1101,7 +865,6 @@ public class SeaBattleController
             }
         }
     }
-    // This method marks fields next to destroyed ship
     private void markFieldsNextToDestroyedShip(boolean updatePlayerSeaBattleCells, Ship ship)
     {
         // Use proper array
@@ -1123,13 +886,13 @@ public class SeaBattleController
                             // Mark proper fields as empty
                             if(i == shipCoordinates.getRow() && j == shipCoordinates.getColumn())
                             {
-
                                 // Fields above ship
                                 if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
                                 {
                                     seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setText("X");
                                     seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn()].setDisable(true);
                                 }
+
                                 // Fields below ship
                                 if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 9) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 10))
                                 {
@@ -1168,6 +931,7 @@ public class SeaBattleController
                                     seaBattleCells[tempRowNumber][tempColumnNumber].setText("X");
                                     seaBattleCells[tempRowNumber][tempColumnNumber].setDisable(true);
                                 }
+
                                 // Fields on the right of ship
                                 if(shipCoordinates.getRow() < 9)
                                 {
@@ -1213,6 +977,7 @@ public class SeaBattleController
                                         seaBattleCells[shipCoordinates.getRow() - 1][shipCoordinates.getColumn() + 1].setDisable(true);
                                     }
                                 }
+
                                 // Fields below ship
                                 if(shipCoordinates.getRow() < 9)
                                 {
@@ -1233,12 +998,14 @@ public class SeaBattleController
                                         seaBattleCells[shipCoordinates.getRow() + 1][shipCoordinates.getColumn() + 1].setDisable(true);
                                     }
                                 }
+
                                 // Fields on the left side of ship
                                 if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 1 && shipCoordinates.getColumn() < 10))
                                 {
                                     seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setText("X");
                                     seaBattleCells[shipCoordinates.getRow()][shipCoordinates.getColumn() - 1].setDisable(true);
                                 }
+
                                 // Fields on the right side of ship
                                 if((shipCoordinates.getRow() > 0 && shipCoordinates.getRow() < 10) && (shipCoordinates.getColumn() > 0 && shipCoordinates.getColumn() < 9))
                                 {

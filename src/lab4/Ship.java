@@ -8,9 +8,6 @@ public class Ship
     private String orientation;
     private ShipCoordinates[] shipCoordinates;
     private int shipLength;
-    private int columnNumber;
-    private int endPosition;
-    private int rowNumber;
     // Controller
     private static SeaBattleController seaBattleController;
 
@@ -30,20 +27,9 @@ public class Ship
     public int getShipLength() {
         return shipLength;
     }
-    public int getRowNumber() {
-        return rowNumber;
-    }
-    public int getColumnNumber() {
-        return columnNumber;
-    }
-    public int getEndPosition() {
-        return endPosition;
-    }
 
     public Ship(int shipLength, String orientation, ShipCoordinates[] shipCoordinates, boolean addComputerShipsInfo)
     {
-        // Create array with ship coordinates
-        this.shipCoordinates = shipCoordinates;
         // Create new label and add it to proper container
         switch(shipLength)
         {
@@ -99,6 +85,7 @@ public class Ship
 
         // Set values to variables
         this.orientation = orientation;
+        this.shipCoordinates = shipCoordinates;
         this.shipLength = shipLength;
     }
     @Override
@@ -117,6 +104,5 @@ public class Ship
             }
         }
         return shipInfo.toString();
-//        return  "Ship info: " + this.shipInfo.getText() + ", orientation: " + orientation + ", row number: " + rowNumber + ", column: " + columnNumber + ", end position: " + endPosition;
     }
 }
