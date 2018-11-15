@@ -110,6 +110,7 @@ public class Main
     private static void readNumberFromFile(File file, int startLine)
     {
         BufferedReader bufferedReader = null;
+        int checksum = 0;
         try {
             String temp;
             String[][] values = new String[3][3];
@@ -246,7 +247,16 @@ public class Main
                 }
 
                 bufferedReader.close();
+
+                // Calculate checksum
+                if(i == 8)
+                    checksum += getAccountNumberFromText(values);
+                else
+                    checksum += getAccountNumberFromText(values) * (9 - i);
             }
+
+            // Check account checksum
+            System.out.println("Account number status: " + (checkIfAccountChecksumIsValid(checksum) ? "VALID" : "INVALID (checksum % 11 != 0)"));
         } catch(IOException e) {
             e.printStackTrace();
         } finally {
@@ -310,5 +320,28 @@ public class Main
         }
 
         return numberOfLines;
+    }
+
+    private static boolean checkIfAccountChecksumIsValid(int accountChecksum)
+    {
+//        boolean accountNumberIsValid = false;
+
+//        switch(accountChecksum % 11)
+//        {
+//            case 0:
+//            case 1:
+//            case 2:
+//            case 3:
+//            case 4:
+//            case 5:
+//            case 6:
+//            case 7:
+//            case 8:
+//            case 9:
+//                accountNumberIsValid = true;
+//                break;
+//        }
+//        return accountNumberIsValid;
+        return accountChecksum % 11 == 0;
     }
 }
